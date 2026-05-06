@@ -1,7 +1,8 @@
 import { intro, outro, note, cancel } from "@clack/prompts";
 import open from "open";
 import { detectAuth } from "./auth.js";
-import { askProjectName, gatherRemainingInputs, isValidComposioKey } from "./inputs.js";
+import { askProjectName, gatherRemainingInputs } from "./inputs.js";
+import { resolveComposioApiKey, isValidComposioKey } from "./composio-auth.js";
 import { forkRepo } from "./github.js";
 import {
   detectLocalRepo,
@@ -53,12 +54,12 @@ export async function deploy(): Promise<void> {
         })
       : new Set<string>();
 
-    // If COMPOSIO_API_KEY exists, sanity-check the value is actually a Composio
-    // key (we've seen UI text accidentally pasted) so we can re-prompt instead
-    // of silently reusing junk.
-    let existingComposioKeyValid = false;
+    // Resolve the Composio API key. If a valid one is already on the project,
+    // reuse it; otherwise pull from the local Composio CLI (running
+    // `composio login` interactively if not authenticated).
+    let composioApiKey: string | null = null;
     if (existingProject && existingEnvKeys.has("COMPOSIO_API_KEY")) {
-      const value = await fetchProjectEnvValue(
+      const existing = await fetchProjectEnvValue(
         {
           token: auth.vercelToken,
           teamId: auth.vercelTeamId,
@@ -66,13 +67,14 @@ export async function deploy(): Promise<void> {
         },
         "COMPOSIO_API_KEY",
       );
-      existingComposioKeyValid = isValidComposioKey(value);
+      if (!isValidComposioKey(existing)) {
+        composioApiKey = await resolveComposioApiKey();
+      }
+    } else {
+      composioApiKey = await resolveComposioApiKey();
     }
 
-    const remaining = await gatherRemainingInputs({
-      existingEnvKeys,
-      existingComposioKeyValid,
-    });
+    const remaining = await gatherRemainingInputs({ existingEnvKeys });
 
     let repo: string;
     if (localRepo) {
@@ -129,7 +131,7 @@ export async function deploy(): Promise<void> {
       token: auth.vercelToken,
       teamId: auth.vercelTeamId,
       projectId: project.id,
-      composioApiKey: remaining.composioApiKey,
+      composioApiKey,
       hasBetterAuthSecret: existingEnvKeys.has("BETTER_AUTH_SECRET"),
       hasCronSecret: existingEnvKeys.has("CRON_SECRET"),
     });

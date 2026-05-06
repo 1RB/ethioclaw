@@ -1,5 +1,14 @@
-import { spinner, log, isCancel, cancel, confirm, note } from "@clack/prompts";
-import open from "open";
+import { exec as _exec } from "child_process";
+import { promisify } from "util";
+import { mkdir, writeFile } from "fs/promises";
+import { join } from "path";
+import { spinner, log } from "@clack/prompts";
+import {
+  fetchProjectEnvValue,
+  type ProjectEnvLookupArgs,
+} from "./vercel-env.js";
+
+const exec = promisify(_exec);
 
 interface ProvisionArgs {
   token: string;
@@ -9,224 +18,220 @@ interface ProvisionArgs {
   ownerSlug: string;
 }
 
-function projectStoresUrl(args: ProvisionArgs): string {
-  return `https://vercel.com/${args.ownerSlug}/${args.projectName}/stores`;
-}
-
 interface ConnectionStrings {
   databaseUrl: string;
   redisUrl: string | null;
 }
 
-interface VercelEnvVar {
-  id: string;
-  key: string;
-  value: string;
-  target: string[];
+/**
+ * Write a .vercel/project.json so the `vercel integration add` CLI knows which
+ * project to install integrations into, without requiring an interactive
+ * `vercel link` step. Returns the path to use as `--cwd` for vercel commands.
+ */
+async function ensureVercelLinkDir(args: ProvisionArgs): Promise<string> {
+  const linkDir = join(
+    process.env.TMPDIR ?? "/tmp",
+    `trustclaw-deploy-${args.projectId}`,
+  );
+  await mkdir(join(linkDir, ".vercel"), { recursive: true });
+  await writeFile(
+    join(linkDir, ".vercel", "project.json"),
+    JSON.stringify(
+      {
+        projectId: args.projectId,
+        orgId: args.teamId ?? "",
+        projectName: args.projectName,
+      },
+      null,
+      2,
+    ),
+    "utf-8",
+  );
+  return linkDir;
 }
 
-async function fetchSingleEnvValue(
-  args: ProvisionArgs,
-  envId: string,
-): Promise<string | null> {
-  // The list endpoint's `?decrypt=true` doesn't actually return decrypted values
-  // for marketplace-managed env vars (they come back as encrypted JSON blobs).
-  // The single-env endpoint returns the real value.
-  const url = args.teamId
-    ? `https://api.vercel.com/v1/projects/${args.projectId}/env/${envId}?teamId=${args.teamId}`
-    : `https://api.vercel.com/v1/projects/${args.projectId}/env/${envId}`;
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${args.token}` },
-  });
-  if (!res.ok) return null;
-  const data = (await res.json()) as { value?: string };
-  return data.value ?? null;
+interface AddIntegrationResult {
+  ok: boolean;
+  /** True when Vercel handed off to a browser for additional setup. */
+  needsBrowser: boolean;
+  /** Combined stdout/stderr — useful for debugging genuine failures. */
+  output: string;
 }
 
-async function fetchProjectEnvVar(
-  args: ProvisionArgs,
+/**
+ * Install a Vercel Marketplace integration onto the project via the Vercel CLI.
+ *
+ * Returns a structured result instead of throwing: many "failures" actually
+ * mean "Vercel opened a browser for the user to finish setup." We treat that
+ * as a successful kickoff and let the caller poll the project env for the
+ * resulting connection string.
+ */
+async function addIntegration(args: {
+  cwd: string;
+  integrationSlug: string;
+  resourceName: string;
+  plan?: string;
+}): Promise<AddIntegrationResult> {
+  // -e production -e preview -e development connects all environments.
+  // --no-env-pull skips writing a .env.local on disk.
+  // We *don't* pass --non-interactive: we want Vercel to be free to open a
+  // browser when additional setup (e.g. accepting marketplace terms,
+  // choosing a region) is required.
+  const planFlag = args.plan ? ` --plan ${args.plan}` : "";
+  const cmd =
+    `vercel integration add ${args.integrationSlug}` +
+    ` --name ${args.resourceName}` +
+    ` -e production -e preview -e development` +
+    ` --no-env-pull${planFlag}`;
+  try {
+    const { stdout, stderr } = await exec(cmd, { cwd: args.cwd });
+    return { ok: true, needsBrowser: false, output: stdout + stderr };
+  } catch (err) {
+    const e = err as { stdout?: string; stderr?: string; message?: string };
+    const output = `${e.stdout ?? ""}${e.stderr ?? ""}${e.message ?? ""}`;
+    const needsBrowser =
+      /Additional setup required/i.test(output) ||
+      /Opening browser/i.test(output);
+    return { ok: false, needsBrowser, output };
+  }
+}
+
+/**
+ * Wait for the integration's env var to land on the project after the user
+ * finishes any browser-side setup. Polls every 5 seconds for up to 5 minutes.
+ */
+async function pollForEnvVar(
+  lookup: ProjectEnvLookupArgs,
   candidateKeys: string[],
   prefixes: string[],
+  spinnerMsg: (attempt: number) => string,
+  s: ReturnType<typeof spinner>,
 ): Promise<string | null> {
-  const listUrl = args.teamId
-    ? `https://api.vercel.com/v10/projects/${args.projectId}/env?teamId=${args.teamId}`
-    : `https://api.vercel.com/v10/projects/${args.projectId}/env`;
-
-  const res = await fetch(listUrl, {
-    headers: { Authorization: `Bearer ${args.token}` },
-  });
-  if (!res.ok) return null;
-
-  const data = (await res.json()) as { envs: VercelEnvVar[] };
-
-  for (const key of candidateKeys) {
-    const match = data.envs.find((e) => e.key === key);
-    if (!match) continue;
-    const value = await fetchSingleEnvValue(args, match.id);
-    if (value && prefixes.some((p) => value.startsWith(p))) {
-      return value;
+  const MAX_ATTEMPTS = 60; // 60 * 5s = 5 minutes
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    s.message(spinnerMsg(attempt));
+    for (const key of candidateKeys) {
+      const v = await fetchProjectEnvValue(lookup, key);
+      if (v && prefixes.some((p) => v.startsWith(p))) {
+        return v;
+      }
     }
+    await new Promise((r) => setTimeout(r, 5000));
   }
   return null;
-}
-
-async function pollForEnvVar(
-  args: ProvisionArgs,
-  label: string,
-  candidateKeys: string[],
-  prefixes: string[],
-): Promise<string> {
-  // After the user confirms, give Vercel a brief moment to propagate, then fetch.
-  // Retry a few times with backoff before falling back to manual paste.
-  const MAX_ATTEMPTS = 5;
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    const proceed = await confirm({
-      message:
-        attempt === 1
-          ? `Done? I'll grab ${label} from your Vercel project env.`
-          : `Still can't find ${label}. Try again?`,
-      initialValue: true,
-    });
-    if (isCancel(proceed) || !proceed) {
-      cancel("Cancelled.");
-      process.exit(0);
-    }
-
-    const s = spinner();
-    s.start(`Fetching ${label} from Vercel project env vars`);
-    // Small delay before first fetch so Vercel has time to inject the var.
-    await new Promise((r) => setTimeout(r, 1500));
-    const value = await fetchProjectEnvVar(args, candidateKeys, prefixes);
-    if (value) {
-      s.stop(`${label} found`);
-      return value;
-    }
-    s.stop(`${label} not yet on the project`);
-    log.warn(
-      `Make sure you clicked "Connect" so the integration injects ${candidateKeys.join(" / ")} into "${args.projectName}".`,
-    );
-  }
-
-  throw new Error(
-    `Could not find ${label} on the project after several attempts. ` +
-      `Open ${projectStoresUrl(args)}, finish the connect flow, then re-run.`,
-  );
 }
 
 async function provisionPostgres(args: ProvisionArgs): Promise<string> {
   const s = spinner();
   s.start("Checking project for an existing Postgres connection");
-  const existing = await fetchProjectEnvVar(
-    args,
-    ["DATABASE_URL", "POSTGRES_URL", "POSTGRES_PRISMA_URL"],
-    ["postgres://", "postgresql://"],
-  );
-  if (existing) {
-    s.stop("Postgres already connected - reusing existing DATABASE_URL");
-    return existing;
+  const lookup = {
+    token: args.token,
+    teamId: args.teamId,
+    projectId: args.projectId,
+  };
+  for (const key of ["DATABASE_URL", "POSTGRES_URL", "POSTGRES_PRISMA_URL"]) {
+    const v = await fetchProjectEnvValue(lookup, key);
+    if (v && (v.startsWith("postgres://") || v.startsWith("postgresql://"))) {
+      s.stop("Postgres already connected - reusing existing DATABASE_URL");
+      return v;
+    }
   }
-  s.message("Provisioning Neon Postgres via Vercel Marketplace");
 
-  const url = args.teamId
-    ? `https://api.vercel.com/v1/storage/stores?teamId=${args.teamId}`
-    : `https://api.vercel.com/v1/storage/stores`;
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${args.token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      type: "postgres",
-      name: "trustclaw-postgres",
-      projectId: args.projectId,
-    }),
+  s.message("Provisioning Neon Postgres via `vercel integration add neon`");
+  const linkDir = await ensureVercelLinkDir(args);
+  const result = await addIntegration({
+    cwd: linkDir,
+    integrationSlug: "neon",
+    resourceName: "trustclaw-postgres",
+    plan: "free_v3",
   });
 
-  if (res.ok) {
-    const data = (await res.json()) as { connectionString: string };
-    s.stop("Postgres provisioned");
-    return data.connectionString;
+  if (!result.ok && !result.needsBrowser) {
+    s.stop("Postgres provisioning failed");
+    throw new Error(`vercel integration add neon failed:\n${result.output}`);
   }
 
-  s.stop("Auto-provisioning unavailable; opening project stores page");
-  note(
-    `Opening the stores page for "${args.projectName}". From there:\n` +
-      `  1. Click "Create Database"\n` +
-      `  2. Pick "Neon" → Continue\n` +
-      `  3. Continue\n` +
-      `  4. Check "Development" (and Preview) so DATABASE_URL is set in all envs\n` +
-      `  5. Click "Connect"\n` +
-      `(The project is already selected since you're on its stores page.)`,
-    "Set up Neon Postgres",
-  );
-  await open(projectStoresUrl(args));
+  if (result.needsBrowser) {
+    s.message(
+      "Browser opened for Neon setup - finish the setup, I'll wait...",
+    );
+  }
 
-  return pollForEnvVar(
-    args,
-    "DATABASE_URL",
+  const url = await pollForEnvVar(
+    lookup,
     ["DATABASE_URL", "POSTGRES_URL", "POSTGRES_PRISMA_URL"],
     ["postgres://", "postgresql://"],
+    (attempt) =>
+      result.needsBrowser
+        ? `Waiting for Neon setup to finish in browser (attempt ${attempt})`
+        : "Fetching DATABASE_URL from project env",
+    s,
   );
+  if (!url) {
+    s.stop("Timed out waiting for DATABASE_URL");
+    throw new Error(
+      "Neon never injected DATABASE_URL onto the project. Finish the marketplace setup at\n" +
+        `https://vercel.com/${args.ownerSlug}/${args.projectName}/stores and re-run.`,
+    );
+  }
+  s.stop("Postgres provisioned");
+  return url;
 }
 
 async function provisionRedis(args: ProvisionArgs): Promise<string> {
   const s = spinner();
   s.start("Checking project for an existing Redis connection");
-  const existing = await fetchProjectEnvVar(
-    args,
-    ["REDIS_URL", "KV_URL"],
-    ["redis://", "rediss://"],
-  );
-  if (existing) {
-    s.stop("Redis already connected - reusing existing REDIS_URL");
-    return existing;
+  const lookup = {
+    token: args.token,
+    teamId: args.teamId,
+    projectId: args.projectId,
+  };
+  for (const key of ["REDIS_URL", "KV_URL"]) {
+    const v = await fetchProjectEnvValue(lookup, key);
+    if (v && (v.startsWith("redis://") || v.startsWith("rediss://"))) {
+      s.stop("Redis already connected - reusing existing REDIS_URL");
+      return v;
+    }
   }
-  s.message("Provisioning Upstash Redis via Vercel Marketplace");
 
-  const url = args.teamId
-    ? `https://api.vercel.com/v1/storage/stores?teamId=${args.teamId}`
-    : `https://api.vercel.com/v1/storage/stores`;
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${args.token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      type: "redis",
-      name: "trustclaw-redis",
-      projectId: args.projectId,
-    }),
+  s.message("Provisioning Redis via `vercel integration add redis`");
+  const linkDir = await ensureVercelLinkDir(args);
+  const result = await addIntegration({
+    cwd: linkDir,
+    integrationSlug: "redis",
+    resourceName: "trustclaw-redis",
   });
 
-  if (res.ok) {
-    const data = (await res.json()) as { connectionString: string };
-    s.stop("Redis provisioned");
-    return data.connectionString;
+  if (!result.ok && !result.needsBrowser) {
+    s.stop("Redis provisioning failed");
+    throw new Error(`vercel integration add redis failed:\n${result.output}`);
   }
 
-  s.stop("Auto-provisioning unavailable; opening project stores page");
-  note(
-    `Opening the stores page for "${args.projectName}". From there:\n` +
-      `  1. Click "Create Database"\n` +
-      `  2. Pick "Redis" (Upstash)\n` +
-      `  3. Walk through the creator steps → Click "Create"\n` +
-      `  4. Check "Development" (and Preview) so REDIS_URL is set in all envs\n` +
-      `  5. Click "Connect"\n` +
-      `(The project is already selected since you're on its stores page.)`,
-    "Set up Upstash Redis",
-  );
-  await open(projectStoresUrl(args));
+  if (result.needsBrowser) {
+    s.message(
+      "Browser opened for Redis setup - finish the setup, I'll wait...",
+    );
+  }
 
-  return pollForEnvVar(
-    args,
-    "REDIS_URL",
+  const url = await pollForEnvVar(
+    lookup,
     ["REDIS_URL", "KV_URL"],
     ["redis://", "rediss://"],
+    (attempt) =>
+      result.needsBrowser
+        ? `Waiting for Redis setup to finish in browser (attempt ${attempt})`
+        : "Fetching REDIS_URL from project env",
+    s,
   );
+  if (!url) {
+    s.stop("Timed out waiting for REDIS_URL");
+    throw new Error(
+      "Redis never injected REDIS_URL onto the project. Finish the marketplace setup at\n" +
+        `https://vercel.com/${args.ownerSlug}/${args.projectName}/stores and re-run.`,
+    );
+  }
+  s.stop("Redis provisioned");
+  return url;
 }
 
 export async function provisionStores(
@@ -237,5 +242,4 @@ export async function provisionStores(
   return { databaseUrl, redisUrl };
 }
 
-void cancel;
-void isCancel;
+void log;
