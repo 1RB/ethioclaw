@@ -1,4 +1,3 @@
-import { env } from "~/env";
 import { protectedProcedure } from "~/server/api/trpc";
 import { createComposioClient } from "~/server/clients/composio";
 
@@ -24,11 +23,7 @@ export const getIntegrationAuthLinks = protectedProcedure.query(
   async ({ ctx }) => {
     const userId = ctx.session.user.id;
     const composio = createComposioClient();
-    const session = await composio.create(userId, {
-      authConfigs: env.TWITTER_AUTH_CONFIG
-        ? { twitter: env.TWITTER_AUTH_CONFIG }
-        : {},
-    });
+    const session = await composio.create(userId, {});
     const toolkitsInfo = await session.toolkits({
       toolkits: ONBOARDING_TOOLKITS.map((t) => t.slug),
     });

@@ -9,11 +9,7 @@ export const getAuthLink = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id;
     const composio = createComposioClient();
-    const session = await composio.create(userId, {
-      authConfigs: env.TWITTER_AUTH_CONFIG
-        ? { twitter: env.TWITTER_AUTH_CONFIG }
-        : {},
-    });
+    const session = await composio.create(userId, {});
 
     try {
       const connectionRequest = await session.authorize(input.toolkit, {

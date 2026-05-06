@@ -1,18 +1,13 @@
 import { protectedProcedure } from "~/server/api/trpc";
 import { createComposioClient } from "~/server/clients/composio";
 import { getToolkitsInput } from "./getToolkits.schema";
-import { env } from "~/env";
 
 export const getToolkits = protectedProcedure
   .input(getToolkitsInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id;
     const composio = createComposioClient();
-    const session = await composio.create(userId, {
-      authConfigs: env.TWITTER_AUTH_CONFIG
-        ? { twitter: env.TWITTER_AUTH_CONFIG }
-        : {},
-    });
+    const session = await composio.create(userId, {});
 
     // 1. Fetch toolkit listing
     const toolkitsResult = await session.toolkits({

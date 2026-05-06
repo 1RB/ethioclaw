@@ -24,7 +24,6 @@ import {
 } from "./context/token-estimation";
 import { stripToolResultEchoes } from "./strip-tool-echoes";
 import { clearStreamingMessage } from "~/server/clients/redis";
-import { env } from "~/env";
 import type { ReconstructedMessage } from "./types";
 
 type MessageSource = "web" | "telegram" | "cron";
@@ -145,9 +144,6 @@ export async function prepareAgentRun(
     manageConnections: {
       waitForConnections: true,
     },
-    authConfigs: env.TWITTER_AUTH_CONFIG
-      ? { twitter: env.TWITTER_AUTH_CONFIG }
-      : {},
   });
   const composioTools = await session.tools();
 

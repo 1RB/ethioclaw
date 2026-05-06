@@ -24,9 +24,6 @@ export const env = createEnv({
     // Redis (optional - resumable streams disabled when missing; basic streaming still works)
     REDIS_URL: z.string().optional(),
 
-    // Composio Twitter toolkit auth config (optional - twitter toolkit omitted when missing)
-    TWITTER_AUTH_CONFIG: z.string().optional(),
-
     // Cron auth. Required in production so unauthenticated callers can't hit
     // /api/cron/* endpoints. Vercel auto-injects this when crons are configured
     // in vercel.json; the trustclaw deploy CLI also generates one on first deploy.
@@ -45,7 +42,6 @@ export const env = createEnv({
     TELEGRAM_WEBHOOK_SECRET: process.env.TELEGRAM_WEBHOOK_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     REDIS_URL: process.env.REDIS_URL,
-    TWITTER_AUTH_CONFIG: process.env.TWITTER_AUTH_CONFIG,
     CRON_SECRET: process.env.CRON_SECRET,
 
     // Client URL resolution:

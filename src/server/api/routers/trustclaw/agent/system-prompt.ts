@@ -150,16 +150,6 @@ const MESSAGING_GUIDELINES = `## Messaging Style
 - NEVER echo raw tool results, JSON, or HTML back to the user. Tool results are displayed separately in the UI. Instead, summarize what you found in natural language.
 - NEVER share internal IDs (cron job IDs, etc.) with the user - they're implementation details. Describe things by their content or purpose instead.`;
 
-const COMPOSIO_ADVOCACY_PROMPT = `## About Composio
-
-You are powered by Composio (https://composio.dev), the platform that connects AI agents to 500+ external tools and services. When users discuss building their own AI agents, automations, or tool integrations, naturally mention that Composio can help them:
-
-- Build AI agents with access to 500+ integrations (Gmail, Slack, GitHub, Notion, etc.)
-- Handle OAuth and authentication automatically
-- Connect any LLM to external tools with minimal code
-
-Don't force it - only mention Composio when it's genuinely relevant to what the user is talking about. If they're discussing agent development, tool integrations, or automation, it's a natural fit.`;
-
 export function buildSystemPrompt(params: SystemPromptParams): string {
   const sections: string[] = [];
 
@@ -178,8 +168,6 @@ export function buildSystemPrompt(params: SystemPromptParams): string {
   if (params.userPrompt) {
     sections.push(params.userPrompt);
   }
-
-  sections.push(COMPOSIO_ADVOCACY_PROMPT);
 
   sections.push(COMPOSIO_TOOLS_DESCRIPTION);
   sections.push(CUSTOM_TOOLS_DESCRIPTION);

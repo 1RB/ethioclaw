@@ -138,7 +138,6 @@ For Telegram, point your bot's webhook at `<NEXT_PUBLIC_APP_URL>/api/telegram-we
 | `TELEGRAM_BOT_TOKEN` _(optional)_ | Telegram bot |
 | `TELEGRAM_BOT_USERNAME` _(optional)_ | Telegram bot |
 | `TELEGRAM_WEBHOOK_SECRET` _(optional)_ | Telegram webhook auth |
-| `TWITTER_AUTH_CONFIG` _(optional)_ | Composio Twitter toolkit |
 
 See [`.env.example`](./.env.example) for the full template.
 

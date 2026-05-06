@@ -1,18 +1,13 @@
 import { protectedProcedure } from "~/server/api/trpc";
 import { createComposioClient } from "~/server/clients/composio";
 import { checkConnectionStatusInput } from "./checkConnectionStatus.schema";
-import { env } from "~/env";
 
 export const checkConnectionStatus = protectedProcedure
   .input(checkConnectionStatusInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id;
     const composio = createComposioClient();
-    const session = await composio.create(userId, {
-      authConfigs: env.TWITTER_AUTH_CONFIG
-        ? { twitter: env.TWITTER_AUTH_CONFIG }
-        : {},
-    });
+    const session = await composio.create(userId, {});
 
     const toolkitsInfo = await session.toolkits({
       toolkits: input.toolkits,
