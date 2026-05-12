@@ -41,6 +41,14 @@ TrustClaw runs fine on the free Hobby plan, but Vercel applies two limits that a
 
 To get **per-minute cron precision** and **up to 800s (~13 min) per function**, upgrade to [Vercel Pro](https://vercel.com/pricing) and re-run the CLI (or manually flip `vercel.json` back to `* * * * *` + bump `maxDuration`).
 
+### ⚠️ No rate-limiting or billing out of the box
+
+TrustClaw ships **without** rate limiting, per-user usage caps, or billing logic. If you put a TrustClaw instance on the public internet for strangers to sign up to, **any user can drain your Composio + AI Gateway credits indefinitely**. Before opening signups to anyone but yourself / a trusted handful of people, add at least:
+
+- A rate limiter on the chat + cron endpoints (e.g. [Upstash Rate Limit](https://upstash.com/docs/oss/sdks/ts/ratelimit/overview), [Vercel Functions Rate Limiting](https://vercel.com/docs/rate-limiting))
+- A monthly per-user message / tool-call cap enforced server-side
+- Billing or invite-only signup if you want to recoup costs
+
 ---
 
 ## ✨ Why TrustClaw
