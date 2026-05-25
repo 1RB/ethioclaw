@@ -59,7 +59,7 @@ export function FeaturesSection() {
 
         {/* Asymmetric feature grid with image intrusion */}
         <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f, i) => (
+          {FEATURES.map((f) => (
             <AnimateOnView
               key={f.num}
               className="bg-background p-6 md:p-8"
