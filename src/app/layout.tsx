@@ -18,8 +18,33 @@ const code = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "trustclaw",
+  title: "ETHIOCLAW — AUTONOMOUS AI AGENT",
+  description:
+    "EthioClaw is a secure AI agent with 1000+ tool integrations via OAuth and sandboxed execution.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  openGraph: {
+    title: "ETHIOCLAW — AUTONOMOUS AI AGENT",
+    description:
+      "Your AI that does things while you sleep. 1000+ integrations, sandboxed execution, full audit trails.",
+    url: "https://ethioclaw.vercel.app",
+    siteName: "EthioClaw",
+    type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "ETHIOCLAW — Your agent works while you sleep",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ETHIOCLAW — AUTONOMOUS AI AGENT",
+    description:
+      "Your AI that does things while you sleep. 1000+ integrations, sandboxed execution, full audit trails.",
+    images: ["/og.png"],
+  },
 };
 
 export default async function RootLayout({

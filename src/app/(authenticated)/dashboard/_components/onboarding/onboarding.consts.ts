@@ -38,21 +38,27 @@ export const CURATED_EMOJIS = [
 
 export const MODELS = [
   {
-    value: "claude-opus-4-6" as const,
-    label: "Claude Opus 4.6",
+    value: "accounts/fireworks/models/kimi-k2p6" as const,
+    label: "Kimi K2.6",
     description: "Most capable",
-    cost: "$$$",
-  },
-  {
-    value: "claude-sonnet-4-5-20250929" as const,
-    label: "Claude Sonnet 4.5",
-    description: "Balanced",
     cost: "$$",
   },
   {
-    value: "claude-haiku-4-5-20251001" as const,
-    label: "Claude Haiku 4.5",
-    description: "Fast & affordable",
+    value: "accounts/fireworks/models/kimi-k2p5" as const,
+    label: "Kimi K2.5",
+    description: "Fast & capable",
+    cost: "$$",
+  },
+  {
+    value: "accounts/fireworks/models/deepseek-v4-pro" as const,
+    label: "DeepSeek V4 Pro",
+    description: "Reasoning specialist",
+    cost: "$",
+  },
+  {
+    value: "accounts/fireworks/models/glm-5p1" as const,
+    label: "GLM 5.1",
+    description: "Efficient & versatile",
     cost: "$",
   },
 ] as const;

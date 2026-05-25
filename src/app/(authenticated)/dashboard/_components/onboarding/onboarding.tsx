@@ -8,7 +8,7 @@ import { trpc } from "~/clients/trpc";
 import { showTrpcErrorToast } from "~/components/core/toast-notifications";
 import { ErrorBoundary } from "~/components/core/error-boundary";
 import { Button } from "~/components/ui/button";
-import { allowedAnthropicModelSchema } from "~/server/api/routers/trustclaw/createInstance.schema";
+import { allowedModelSchema } from "~/server/api/routers/trustclaw/createInstance.schema";
 import {
   STEP_ORDER,
   WRITING_STYLES,
@@ -44,7 +44,7 @@ interface OnboardingWizardState {
   personality: PersonalityKey | null;
   emoji: string | null;
   lore: string;
-  anthropicModel: z.infer<typeof allowedAnthropicModelSchema>;
+  model: z.infer<typeof allowedModelSchema>;
 }
 
 function getAnimationState(step: Step): AnimationState {
@@ -100,7 +100,7 @@ export function Onboarding({
 
   const [step, setStep] = useState<Step>(initialStep);
   const [wizardState, setWizardState] = useState<OnboardingWizardState>(() => {
-    const parsedModel = allowedAnthropicModelSchema.safeParse(
+    const parsedModel = allowedModelSchema.safeParse(
       savedState?.anthropicModel,
     );
     return {
@@ -113,9 +113,9 @@ export function Onboarding({
         null,
       emoji: savedState?.emoji ?? null,
       lore: savedState?.lore ?? "",
-      anthropicModel: parsedModel.success
+      model: parsedModel.success
         ? parsedModel.data
-        : "claude-sonnet-4-5-20250929",
+        : "accounts/fireworks/models/kimi-k2p6",
     };
   });
 
@@ -147,11 +147,11 @@ export function Onboarding({
     await saveState.mutateAsync({
       currentStep: nextStep,
       name: currentWizardState.name,
-      writingStyle: currentWizardState.writingStyle,
-      personality: currentWizardState.personality,
-      emoji: currentWizardState.emoji,
-      lore: currentWizardState.lore,
-      anthropicModel: currentWizardState.anthropicModel,
+      writingStyle: currentWizardState.writingStyle ?? undefined,
+      personality: currentWizardState.personality ?? undefined,
+      emoji: currentWizardState.emoji ?? undefined,
+      lore: currentWizardState.lore ?? undefined,
+      anthropicModel: currentWizardState.model,
     });
   };
 
@@ -176,7 +176,7 @@ export function Onboarding({
     }
     try {
       await createInstance.mutateAsync({
-        anthropicModel: wizardState.anthropicModel,
+        anthropicModel: wizardState.model,
       });
       setInstanceCreated(true);
       goToStep("integrations");
@@ -214,7 +214,7 @@ export function Onboarding({
                 Setting things up...
               </h2>
               <p className="text-muted-foreground mt-1 text-sm">
-                Creating your TrustClaw instance and connecting tools
+                Creating your EthioClaw instance and connecting tools
               </p>
             </motion.div>
             {createInstance.isError && (
@@ -309,9 +309,9 @@ export function Onboarding({
           {step === "model" && (
             <ModelStep
               key="model"
-              value={wizardState.anthropicModel}
-              onChange={(anthropicModel) =>
-                setWizardState((prev) => ({ ...prev, anthropicModel }))
+              value={wizardState.model}
+              onChange={(model) =>
+                setWizardState((prev) => ({ ...prev, model }))
               }
               onNext={() => void handleModelNext()}
               onBack={goBack}

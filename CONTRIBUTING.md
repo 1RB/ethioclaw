@@ -1,4 +1,4 @@
-# Contributing to TrustClaw
+# Contributing to EthioClaw
 
 Thanks for wanting to help! Whether you're fixing a bug, building a new feature, or improving the docs - contributions are welcome.
 

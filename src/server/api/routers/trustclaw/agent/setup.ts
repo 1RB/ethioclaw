@@ -1,6 +1,7 @@
 import { ToolLoopAgent, stepCountIs } from "ai";
 import type { ToolSet, SystemModelMessage } from "ai";
 import { db } from "~/server/clients/db";
+import { resolveModel } from "~/server/clients/ai-model";
 import { createComposioClient } from "~/server/clients/composio";
 import { buildSystemPrompt } from "./system-prompt";
 import {
@@ -168,10 +169,7 @@ export async function prepareAgentRun(
     },
   });
 
-  const modelString = instance.anthropicModel.startsWith("anthropic/")
-    ? instance.anthropicModel
-    : `anthropic/${instance.anthropicModel}`;
-  const model = modelString;
+  const model = resolveModel(instance.anthropicModel);
 
   const agent = new ToolLoopAgent({
     model,
@@ -242,7 +240,7 @@ export async function prepareAgentRun(
         void runPostResponseTasks({
           instanceId,
           instance: {
-            anthropicModel: instance.anthropicModel,
+            modelId: instance.anthropicModel,
             compactionCount: instance.compactionCount,
             memoryFlushCount: instance.memoryFlushCount,
             lastCompactionSummary: instance.lastCompactionSummary,

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LogOut,
@@ -17,7 +16,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { ThemeToggle } from "~/components/core/theme-toggle";
-import { TrustClawBrand } from "~/app/_components/trustclaw-brand";
+import { EthioClawBrand } from "~/app/_components/ethioclaw-brand";
 import { authClient } from "~/clients/auth/react";
 import { useTerminalStore } from "./terminal-store";
 
@@ -40,7 +39,7 @@ export function DashboardNavbar() {
 
   return (
     <header className="border-border bg-background/95 flex h-14 shrink-0 items-center justify-between border-b px-4 backdrop-blur">
-      <TrustClawBrand size="sm" logoLink="/dashboard" />
+      <EthioClawBrand size="sm" logoLink="/dashboard" />
 
       <div className="flex items-center gap-1">
         <Tooltip>
@@ -105,30 +104,6 @@ export function DashboardNavbar() {
             </TooltipContent>
           </Tooltip>
         )}
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              href="https://discord.gg/composio"
-              target="_blank"
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9"
-              >
-                <Image
-                  src="/images/icons/discord.webp"
-                  alt="Discord"
-                  width={16}
-                  height={16}
-                  className="h-4 w-4 dark:invert"
-                />
-              </Button>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent>Discord</TooltipContent>
-        </Tooltip>
 
         <Tooltip>
           <TooltipTrigger asChild>

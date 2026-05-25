@@ -3,6 +3,7 @@
 // Fallback chain from openclaw: src/agents/compaction.ts:176-242
 import { generateText } from "ai";
 import { db } from "~/server/clients/db";
+import { resolveModel } from "~/server/clients/ai-model";
 import type { ReconstructedMessage } from "../types";
 import { estimateMessageTokens } from "../context/token-estimation";
 import {
@@ -17,7 +18,7 @@ import { sanitizeString } from "../context/build-context";
 
 interface CompactionParams {
   instanceId: string;
-  anthropicModel: string;
+  modelId: string;
   messages: ReconstructedMessage[];
   keepRecentTokens: number;
   previousSummary: string | null;
@@ -65,13 +66,11 @@ export function findCutPoint(
 }
 
 async function summarize(
-  anthropicModel: string,
+  modelId: string,
   conversationText: string,
   previousSummary: string | null,
 ): Promise<string> {
-  const modelString = anthropicModel.startsWith("anthropic/")
-    ? anthropicModel
-    : `anthropic/${anthropicModel}`;
+  const model = resolveModel(modelId);
 
   const safeConversation = sanitizeString(conversationText);
   const safePreviousSummary = previousSummary ? sanitizeString(previousSummary) : null;
@@ -84,7 +83,7 @@ async function summarize(
   }
 
   const result = await generateText({
-    model: modelString,
+    model,
     system: COMPACTION_SYSTEM_PROMPT,
     messages: [{ role: "user", content: prompt }],
     maxOutputTokens: 4_000,
@@ -94,7 +93,7 @@ async function summarize(
 }
 
 async function stagedSummarize(
-  anthropicModel: string,
+  modelId: string,
   messages: ReconstructedMessage[],
   previousSummary: string | null,
 ): Promise<string> {
@@ -106,22 +105,20 @@ async function stagedSummarize(
   const secondText = serializeMessages(secondHalf);
 
   const firstSummary = await summarize(
-    anthropicModel,
+    modelId,
     firstText,
     previousSummary,
   );
 
   const secondSummary = await summarize(
-    anthropicModel,
+    modelId,
     secondText,
     firstSummary,
   );
 
-  const mergeModelString = anthropicModel.startsWith("anthropic/")
-    ? anthropicModel
-    : `anthropic/${anthropicModel}`;
+  const model = resolveModel(modelId);
   const mergeResult = await generateText({
-    model: mergeModelString,
+    model,
     system: COMPACTION_SYSTEM_PROMPT,
     messages: [
       {
@@ -156,7 +153,7 @@ function stripLargeToolResults(
 export async function runCompaction(
   params: CompactionParams,
 ): Promise<CompactionResult | null> {
-  const { instanceId, anthropicModel, messages, keepRecentTokens, previousSummary, compactionCount } = params;
+  const { instanceId, modelId, messages, keepRecentTokens, previousSummary, compactionCount } = params;
 
   const cutIndex = findCutPoint(messages, keepRecentTokens);
   if (cutIndex <= 0) return null;
@@ -171,13 +168,13 @@ export async function runCompaction(
 
     if (conversationText.length > ADAPTIVE_CHUNK_THRESHOLD) {
       summary = await stagedSummarize(
-        anthropicModel,
+        modelId,
         messagesToCompact,
         previousSummary,
       );
     } else {
       summary = await summarize(
-        anthropicModel,
+        modelId,
         conversationText,
         previousSummary,
       );
@@ -187,7 +184,7 @@ export async function runCompaction(
       const stripped = stripLargeToolResults(messagesToCompact);
       const strippedText = serializeMessages(stripped);
       summary = await summarize(
-        anthropicModel,
+        modelId,
         strippedText,
         previousSummary,
       );

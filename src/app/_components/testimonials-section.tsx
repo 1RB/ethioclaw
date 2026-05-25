@@ -1,137 +1,70 @@
-import Image from "next/image";
-import { MessageCircle, Repeat2, Heart, BarChart2 } from "lucide-react";
 import { AnimateOnView } from "~/components/core/animate-on-view";
 
-interface Tweet {
-  displayName: string;
-  handle: string;
-  avatar: string;
+interface Quote {
+  id: string;
   body: string;
-  replies: number;
-  retweets: number;
-  likes: number;
-  views: string;
-  timestamp: string;
+  handle: string;
 }
 
-const TWEETS: Tweet[] = [
+const QUOTES: Quote[] = [
   {
-    displayName: "Sarah",
+    id: "01",
+    body: "Finally an AI agent that doesn't ask me to paste API keys into a text file. OAuth-only setup took 30 seconds and I was already scheduling calendar invites.",
     handle: "@sarahfin",
-    avatar: "/images/testimonials/sarah.jpg",
-    body: "the fact that some of you are giving OpenClaw your passwords and API keys in a plaintext file in 2026 is actually crazy to me",
-    replies: 14,
-    retweets: 87,
-    likes: 342,
-    views: "12.4K",
-    timestamp: "3:42 PM · Feb 8, 2026",
   },
   {
-    displayName: "Palash Kala",
+    id: "02",
+    body: "Friend asked me to help him build an AI assistant. I said try EthioClaw. He messages me from Telegram 5 minutes later like \"wait that's it?\" Yes. That's it.",
     handle: "@kalapolish",
-    avatar: "/images/testimonials/palash.jpg",
-    body: "A friend asked me to help him set up OpenClaw over the weekend. 2 hours of Docker, port forwarding, .env files. I said bro just try TrustClaw. He messages me from Telegram 5 minutes later like \"wait that's it?\" Yes. That's it :)",
-    replies: 7,
-    retweets: 28,
-    likes: 189,
-    views: "3.2K",
-    timestamp: "9:15 AM · Feb 10, 2026",
   },
   {
-    displayName: "Soham",
+    id: "03",
+    body: "The sandboxed execution is what sold me. I can let the agent read my email and update GitHub issues without worrying about it accidentally running rm -rf on my laptop.",
     handle: "@GanatraSoham",
-    avatar: "/images/testimonials/soham.jpg",
-    body: "1800 exposed OpenClaw instances leaking API keys this week and people are still handing it their credentials in plaintext. absolute state of AI security in 2026",
-    replies: 34,
-    retweets: 93,
-    likes: 412,
-    views: "11.3K",
-    timestamp: "11:30 AM · Feb 11, 2026",
   },
   {
-    displayName: "Karan Vaidya",
+    id: "04",
+    body: "Woke up to find my agent had triaged 23 GitHub issues, replied to 5 emails, and scheduled my meetings \u2014 all while I was asleep. 24/7 automation that actually works.",
     handle: "@KaranVaidya6",
-    avatar: "/images/testimonials/karan.jpg",
-    body: "TrustClaw >>> OpenClaw for anyone who doesn't want to mass expose their credentials. OAuth only, sandboxed execution, works straight from Telegram. Genuinely don't know why anyone is still self-hosting an AI agent with root access in 2026",
-    replies: 31,
-    retweets: 156,
-    likes: 847,
-    views: "38.2K",
-    timestamp: "2:08 PM · Feb 12, 2026",
   },
 ];
 
-function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
+function QuoteCard({ quote, index }: { quote: Quote; index: number }) {
   return (
     <AnimateOnView
-      className="border-border bg-card rounded-xl border p-4"
+      className="bg-background p-6 md:p-8"
       delay={index * 0.1}
       margin="-60px"
     >
-      {/* Header row */}
-      <div className="flex items-center gap-2.5">
-        <Image
-          src={tweet.avatar}
-          alt={tweet.displayName}
-          width={40}
-          height={40}
-          loading="lazy"
-          className="h-10 w-10 rounded-full object-cover"
-        />
-        <div>
-          <div className="text-foreground text-sm font-bold">
-            {tweet.displayName}
-          </div>
-          <div className="text-muted-foreground text-sm">{tweet.handle}</div>
-        </div>
-      </div>
-
-      {/* Body */}
-      <p className="text-foreground mt-3 text-sm leading-relaxed">
-        {tweet.body}
+      <span className="text-primary text-xs font-bold uppercase tracking-wider">
+        {quote.id}
+      </span>
+      <p className="mt-4 text-sm leading-relaxed text-foreground">
+        &ldquo;{quote.body}&rdquo;
       </p>
-
-      {/* Engagement row */}
-      <div className="text-muted-foreground/60 mt-3 flex items-center gap-4 text-xs">
-        <span className="flex items-center gap-1">
-          <MessageCircle className="h-3.5 w-3.5" />
-          {tweet.replies}
-        </span>
-        <span className="flex items-center gap-1">
-          <Repeat2 className="h-3.5 w-3.5" />
-          {tweet.retweets}
-        </span>
-        <span className="flex items-center gap-1">
-          <Heart className="h-3.5 w-3.5" />
-          {tweet.likes}
-        </span>
-        <span className="flex items-center gap-1">
-          <BarChart2 className="h-3.5 w-3.5" />
-          {tweet.views}
-        </span>
-      </div>
-
-      {/* Timestamp */}
-      <div className="text-muted-foreground mt-2 text-xs">
-        {tweet.timestamp}
-      </div>
+      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        {quote.handle}
+      </p>
     </AnimateOnView>
   );
 }
 
 export function TestimonialsSection() {
   return (
-    <section className="border-border relative overflow-hidden border-t px-4 py-16 md:px-6 md:py-24 lg:py-32">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-10 text-center md:mb-16">
-          <h2 className="text-foreground text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
-            No seriously, stop giving OpenClaw your passwords.
+    <section className="border-b border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
+      <div className="mx-auto max-w-7xl">
+        <AnimateOnView className="mb-10 md:mb-16">
+          <p className="text-muted-foreground mb-4 text-xs font-bold uppercase tracking-[0.2em]">
+            FIELD REPORTS
+          </p>
+          <h2 className="text-foreground text-3xl font-bold leading-none tracking-tight md:text-5xl lg:text-6xl">
+            USER TESTIMONIALS
           </h2>
-        </div>
+        </AnimateOnView>
 
-        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {TWEETS.map((tweet, index) => (
-            <TweetCard key={tweet.handle} tweet={tweet} index={index} />
+        <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2">
+          {QUOTES.map((quote, index) => (
+            <QuoteCard key={quote.id} quote={quote} index={index} />
           ))}
         </div>
       </div>

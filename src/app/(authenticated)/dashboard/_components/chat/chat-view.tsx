@@ -14,7 +14,6 @@ import { AssistantMessage } from "./assistant-message/assistant-message";
 import { ThinkingIndicator } from "./assistant-message/thinking-indicator";
 import { ChatInput } from "./chat-input";
 import { TerminalPane } from "../terminal/terminal-pane";
-import { ComposioCta } from "./composio-cta";
 
 const SAMPLE_PROMPTS = [
   "Summarize my emails for today",
@@ -119,7 +118,6 @@ export function ChatView({
   return (
     <div className="flex h-full overflow-hidden">
       <div className="flex min-w-0 flex-1 flex-col">
-        <ComposioCta />
         <div className="relative min-h-0 flex-1">
           {isEmpty ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">

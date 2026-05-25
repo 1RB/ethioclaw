@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { trpc } from "~/clients/trpc";
-import { allowedAnthropicModelSchema } from "~/server/api/routers/trustclaw/createInstance.schema";
+import { allowedModelSchema } from "~/server/api/routers/trustclaw/createInstance.schema";
 import { Button } from "~/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -16,30 +16,40 @@ import {
 
 const MODELS = [
   {
-    value: "claude-opus-4-6",
-    label: "Claude Opus 4.6",
+    value: "accounts/fireworks/models/kimi-k2p6",
+    label: "Kimi K2.6",
     description: "Most capable",
   },
   {
-    value: "claude-sonnet-4-5-20250929",
-    label: "Claude Sonnet 4.5",
-    description: "Balanced",
+    value: "accounts/fireworks/models/kimi-k2p5",
+    label: "Kimi K2.5",
+    description: "Fast & capable",
   },
   {
-    value: "claude-haiku-4-5-20251001",
-    label: "Claude Haiku 4.5",
-    description: "Fast & affordable",
+    value: "accounts/fireworks/models/gpt-oss-120b",
+    label: "GPT-OSS 120B",
+    description: "Open weights heavyweight",
+  },
+  {
+    value: "accounts/fireworks/models/deepseek-v4-pro",
+    label: "DeepSeek V4 Pro",
+    description: "Reasoning specialist",
+  },
+  {
+    value: "accounts/fireworks/models/glm-5p1",
+    label: "GLM 5.1",
+    description: "Efficient & versatile",
   },
 ] as const;
 
-type AllowedModel = z.infer<typeof allowedAnthropicModelSchema>;
+type AllowedModel = z.infer<typeof allowedModelSchema>;
 
 interface ModelSettingsProps {
   currentModel: string;
 }
 
 export function ModelSettings({ currentModel }: ModelSettingsProps) {
-  const parsed = allowedAnthropicModelSchema.catch("claude-sonnet-4-5-20250929").parse(currentModel);
+  const parsed = allowedModelSchema.catch("accounts/fireworks/models/kimi-k2p6").parse(currentModel);
   const [selectedModel, setSelectedModel] = useState<AllowedModel>(parsed);
   const utils = trpc.useUtils();
 
@@ -58,16 +68,16 @@ export function ModelSettings({ currentModel }: ModelSettingsProps) {
       <CardHeader>
         <CardTitle>Model</CardTitle>
         <CardDescription>
-          Choose which Claude model powers your assistant
+          Choose which model powers your assistant
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label>Claude Model</Label>
+          <Label>Model</Label>
           <Select
             value={selectedModel}
             onValueChange={(val) => {
-              const model = allowedAnthropicModelSchema.safeParse(val);
+              const model = allowedModelSchema.safeParse(val);
               if (model.success) setSelectedModel(model.data);
             }}
           >

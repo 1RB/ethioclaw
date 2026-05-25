@@ -3,9 +3,9 @@ import { LandingPage } from "./_components/landing-page";
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "TrustClaw",
+  name: "EthioClaw",
   description:
-    "Your 24/7 AI assistant with 1000+ integrations via OAuth and sandboxed execution.",
+    "Your 24/7 AI agent with 1000+ integrations via OAuth and sandboxed execution.",
   applicationCategory: "Productivity",
   operatingSystem: "Web",
   offers: {
@@ -15,8 +15,8 @@ const jsonLd = {
   },
   creator: {
     "@type": "Organization",
-    name: "Composio",
-    url: "https://composio.dev",
+    name: "EthioClaw",
+    url: "https://ethioclaw.vercel.app",
   },
 };
 

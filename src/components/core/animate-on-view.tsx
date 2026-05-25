@@ -13,6 +13,14 @@ interface AnimateOnViewProps {
   as?: "div" | "section" | "h1" | "h2" | "p" | "span";
 }
 
+const INITIAL_STATE: Record<string, React.CSSProperties> = {
+  "fade-in-up": { opacity: 0, transform: "translateY(20px)" },
+  "fade-in": { opacity: 0 },
+  "fade-in-scale": { opacity: 0, transform: "scale(0.97)" },
+  "fade-in-right": { opacity: 0, transform: "translateX(30px) scale(0.97)" },
+  "scatter-in": { opacity: 0, transform: "scale(0.8)" },
+};
+
 export function AnimateOnView({
   children,
   className = "",
@@ -46,12 +54,14 @@ export function AnimateOnView({
     return () => observer.disconnect();
   }, [once, margin]);
 
+  const hiddenStyle = INITIAL_STATE[animation] ?? { opacity: 0 };
+
   return (
     <Tag
       ref={ref as React.RefObject<never>}
       className={className}
       style={{
-        opacity: isVisible ? undefined : 0,
+        ...(isVisible ? {} : hiddenStyle),
         animation: isVisible
           ? `${animation} ${duration}s ease-out ${delay}s both`
           : "none",

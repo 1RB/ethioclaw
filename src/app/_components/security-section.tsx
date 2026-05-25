@@ -5,35 +5,35 @@ const RISKS = [
   {
     label: "UNTRUSTED SKILLS",
     description:
-      "5,700+ unvetted community skills on ClawHub. Malicious ones were found within weeks.",
-    answer: "TrustClaw runs on Composio's managed tool surface instead.",
+      "Community skill registries with thousands of unvetted scripts. Malicious ones were found within weeks.",
+    answer: "EthioClaw runs on a managed, audited tool surface instead.",
   },
   {
     label: "EXPOSED CREDENTIALS",
     description:
-      "API keys stored in plaintext on your machine. 900+ instances found leaking tokens.",
-    answer: "TrustClaw never gives the agent a raw key.",
+      "API keys stored in plaintext on your machine. Hundreds of instances found leaking tokens.",
+    answer: "EthioClaw never gives the agent a raw key.",
   },
   {
     label: "UNSAFE CODE EXECUTION",
     description:
       "Scripts run locally with your permissions. One prompt injection from an email can trigger destructive commands.",
-    answer: "TrustClaw sandboxes all execution remotely.",
+    answer: "EthioClaw sandboxes all execution remotely.",
   },
 ] as const;
 
 export function SecuritySection() {
   return (
-    <section className="px-4 py-16 md:px-6 md:py-24 lg:py-32">
-      <div className="mx-auto max-w-4xl">
+    <section className="border-b border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
+      <div className="mx-auto max-w-7xl">
         <AnimateOnView className="mb-10 md:mb-16">
-          <p className="text-muted-foreground mb-4 font-mono text-xs font-medium uppercase tracking-widest">
-            Why not vanilla OpenClaw?
+          <p className="text-muted-foreground mb-4 text-xs font-bold uppercase tracking-[0.2em]">
+            THREAT MODEL
           </p>
-          <h2 className="text-foreground text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
-            OpenClaw is powerful.
+          <h2 className="text-foreground text-3xl font-bold leading-none tracking-tight md:text-5xl lg:text-6xl">
+            SELF-HOSTED AGENTS
             <br />
-            Its default setup is a security liability.
+            <span className="text-primary">ARE DANGEROUS.</span>
           </h2>
         </AnimateOnView>
 
@@ -41,22 +41,22 @@ export function SecuritySection() {
           {RISKS.map((risk, index) => (
             <AnimateOnView
               key={risk.label}
-              className="flex flex-col gap-4 py-8 first:pt-0 last:pb-0 md:flex-row md:gap-12"
+              className="grid grid-cols-1 gap-4 p-6 md:grid-cols-[240px_1fr] md:gap-8 md:p-8"
               delay={index * 0.1}
               margin="-50px"
             >
-              <div className="flex shrink-0 items-center gap-3 md:w-64">
-                <AlertTriangle className="text-muted-foreground h-5 w-5 shrink-0" />
-                <span className="text-muted-foreground font-mono text-xs font-medium tracking-wider">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                <span className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
                   {risk.label}
                 </span>
               </div>
-              <div className="flex flex-col gap-3">
-                <p className="text-foreground leading-relaxed">
+              <div className="flex flex-col gap-2">
+                <p className="text-foreground text-sm leading-relaxed md:text-base">
                   {risk.description}
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  {risk.answer}
+                <p className="text-primary text-sm leading-relaxed md:text-base">
+                  &rarr; {risk.answer}
                 </p>
               </div>
             </AnimateOnView>

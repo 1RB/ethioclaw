@@ -100,7 +100,7 @@ model ComposioClawInstance {
   userId String @unique
 
   // Anthropic config
-  anthropicModel String @default("claude-sonnet-4-5-20250929")
+  anthropicModel String @default("accounts/fireworks/models/kimi-k2p6")
 
   // Telegram linking
   telegramChatId             String?   @unique
@@ -194,7 +194,7 @@ model OnboardingState {
   personality    String?
   emoji          String?
   lore           String   @default("") @db.Text
-  anthropicModel String   @default("claude-sonnet-4-5-20250929")
+  anthropicModel String   @default("accounts/fireworks/models/kimi-k2p6")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

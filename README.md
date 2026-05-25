@@ -1,4 +1,4 @@
-# TrustClaw
+# EthioClaw
 
 **Your AI that does things while you sleep. _Securely._**
 
@@ -15,11 +15,9 @@ A 24/7 personal AI assistant with 1000+ tools via **OAuth** and **sandboxed exec
 ## ⚡ Deploy your own in seconds
 
 
-Click here to use the Vercel Template:
+## ⚡ EthioClaw
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FComposioHQ%2Ftrustclaw&project-name=trustclaw&repository-name=trustclaw&env=BETTER_AUTH_SECRET,COMPOSIO_API_KEY,CRON_SECRET&envDescription=Generate%20BETTER_AUTH_SECRET%20and%20CRON_SECRET%20with%3A%20openssl%20rand%20-base64%2032.%20Get%20a%20free%20COMPOSIO_API_KEY%20at%20https%3A%2F%2Fdashboard.composio.dev%2Flogin%3Fflow%3Ddeveloper&envLink=https%3A%2F%2Fgithub.com%2FComposioHQ%2Ftrustclaw%23environment-variables&products=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%2C%22protocol%22%3A%22storage%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22upstash%22%2C%22productSlug%22%3A%22upstash-kv%22%2C%22protocol%22%3A%22storage%22%7D%5D&skippable-integrations=1)
-
-
+A 24/7 personal AI assistant with 1000+ tools via **OAuth** and **sandboxed execution**.
 ### Or use the CLI
 
 ```bash
@@ -38,7 +36,7 @@ LLM and embedding calls route through Vercel AI Gateway - **no Anthropic or Open
 
 ---
 
-## ✨ Why TrustClaw
+## ✨ Why EthioClaw
 
 | | |
 |---|---|
@@ -60,9 +58,9 @@ LLM and embedding calls route through Vercel AI Gateway - **no Anthropic or Open
 
 ## 🛡 Security model
 
-TrustClaw is a deliberate response to the security problems with running AI agents locally:
+EthioClaw is a deliberate response to the security problems with running AI agents locally:
 
-| | TrustClaw | Vanilla local agents |
+| | EthioClaw | Vanilla local agents |
 |---|---|---|
 | **Setup** | Seconds | Hours of config |
 | **Credentials** | Encrypted, managed by Composio | Plaintext in local config |
@@ -114,7 +112,7 @@ The design choices:
 
 ### Heads-up about the Vercel free (Hobby) plan
 
-TrustClaw runs fine on the free Hobby plan, but Vercel applies two limits that affect the agent:
+EthioClaw runs fine on the free Hobby plan, but Vercel applies two limits that affect the agent:
 
 - **Cron jobs can only run once per day**, and even then they fire anywhere within a 60-minute window of the scheduled hour. Any cron expression more frequent than daily (e.g. hourly, every-30-min) **fails at deploy time** on Hobby. The CLI auto-adjusts `vercel.json` to a daily schedule when it detects you're on Hobby.
 - **Functions are capped at 300s (5 min)** — long-running agent turns may time out.
@@ -123,7 +121,7 @@ To get **per-minute cron precision** and **up to 800s (~13 min) per function**, 
 
 ### No rate-limiting or billing out of the box
 
-TrustClaw ships **without** rate limiting, per-user usage caps, or billing logic. If you put a TrustClaw instance on the public internet for strangers to sign up to, **any user can drain your Composio + AI Gateway credits indefinitely**. Before opening signups to anyone but yourself / a trusted handful of people, add at least:
+EthioClaw ships **without** rate limiting, per-user usage caps, or billing logic. If you put a EthioClaw instance on the public internet for strangers to sign up to, **any user can drain your Composio + AI Gateway credits indefinitely**. Before opening signups to anyone but yourself / a trusted handful of people, add at least:
 
 - A rate limiter on the chat + cron endpoints (e.g. [Upstash Rate Limit](https://upstash.com/docs/oss/sdks/ts/ratelimit/overview), [Vercel WAF Rate Limiting](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting))
 - A monthly per-user message / tool-call cap enforced server-side
@@ -133,7 +131,7 @@ TrustClaw ships **without** rate limiting, per-user usage caps, or billing logic
 
 ## 🧰 Manual setup (local dev)
 
-If you'd rather skip the deploy CLI and run TrustClaw locally:
+If you'd rather skip the deploy CLI and run EthioClaw locally:
 
 ```bash
 pnpm install
