@@ -36,7 +36,7 @@ const FEATURES = [
 
 export function FeaturesSection() {
   return (
-    <section className="relative border-b border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
+    <section className="relative border-b-2 border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
       <Image
         src="/images/elements/quarter_circle.svg"
         alt=""
@@ -46,6 +46,7 @@ export function FeaturesSection() {
         priority={false}
         className="pointer-events-none absolute -right-40 top-0 hidden h-[500px] w-[500px] opacity-[0.04] md:h-[700px] md:w-[700px] dark:block"
       />
+
       <div className="relative z-10 mx-auto max-w-7xl">
         <AnimateOnView className="mb-10 md:mb-16">
           <p className="text-muted-foreground mb-4 text-xs font-bold uppercase tracking-[0.2em]">
@@ -56,8 +57,9 @@ export function FeaturesSection() {
           </h2>
         </AnimateOnView>
 
+        {/* Asymmetric feature grid with image intrusion */}
         <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
+          {FEATURES.map((f, i) => (
             <AnimateOnView
               key={f.num}
               className="bg-background p-6 md:p-8"
@@ -75,6 +77,45 @@ export function FeaturesSection() {
             </AnimateOnView>
           ))}
         </div>
+
+        {/* Large asymmetric image block */}
+        <AnimateOnView className="mt-px" delay={0.2}>
+          <div className="relative border-2 border-border bg-card">
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="relative overflow-hidden">
+                <Image
+                  src="/images/platform/customer.png"
+                  alt="Customer workflow view"
+                  width={744}
+                  height={428}
+                  className="h-full w-full object-cover"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-[0.04]"
+                  style={{
+                    background:
+                      "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.25) 2px, rgba(0,0,0,0.25) 4px)",
+                  }}
+                  aria-hidden
+                />
+              </div>
+              <div className="flex flex-col justify-center border-t-2 border-border p-6 md:p-10 lg:border-t-0 lg:border-l-2">
+                <span className="text-primary text-xs font-bold uppercase tracking-wider">
+                  INTERFACE
+                </span>
+                <h3 className="mt-4 text-2xl font-bold uppercase tracking-tight md:text-3xl">
+                  BUILT FOR HUMANS.
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">
+                  No YAML configs. No Dockerfiles. No API key spreadsheets.
+                  Just connect your tools via OAuth and start talking to your
+                  agent. The dashboard shows exactly what it is doing, when,
+                  and why.
+                </p>
+              </div>
+            </div>
+          </div>
+        </AnimateOnView>
       </div>
     </section>
   );

@@ -24,7 +24,7 @@ const RISKS = [
 
 export function SecuritySection() {
   return (
-    <section className="border-b border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
+    <section className="border-b-2 border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl">
         <AnimateOnView className="mb-10 md:mb-16">
           <p className="text-muted-foreground mb-4 text-xs font-bold uppercase tracking-[0.2em]">

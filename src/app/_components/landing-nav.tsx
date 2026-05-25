@@ -7,7 +7,7 @@ import { EthioClawBrand } from "./ethioclaw-brand";
 
 export function LandingNav() {
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-border bg-background">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b-2 border-border bg-background">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-8">
         <EthioClawBrand size="md" logoLink="/" />
         <div className="flex items-center gap-2 md:gap-3">

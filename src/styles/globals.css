@@ -277,4 +277,35 @@
     background: #39ff14;
     color: #0a0a0a;
   }
+
+  /* Raw brutalist image treatment */
+  img {
+    filter: contrast(1.05) saturate(0.95);
+  }
+}
+
+@layer utilities {
+  .brutalist-border {
+    border-width: 2px;
+  }
+  .glitch-text {
+    animation: glitch 4s infinite;
+  }
+  .scanlines {
+    position: relative;
+  }
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.25) 2px,
+      rgba(0, 0, 0, 0.25) 4px
+    );
+  }
 }

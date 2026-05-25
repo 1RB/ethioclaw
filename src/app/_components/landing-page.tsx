@@ -6,10 +6,12 @@ import { ComparisonSection } from "./comparison-section";
 import { TestimonialsSection } from "./testimonials-section";
 import { BottomCtaSection } from "./bottom-cta-section";
 import { EthioClawBrand } from "./ethioclaw-brand";
+import { BrutalistOverlay } from "./brutalist-overlay";
 
 export function LandingPage() {
   return (
     <div className="bg-background flex min-h-screen flex-col overflow-x-hidden">
+      <BrutalistOverlay />
       <LandingNav />
       <main className="flex-1 pt-14">
         <HeroSection />
@@ -19,7 +21,7 @@ export function LandingPage() {
         <TestimonialsSection />
         <BottomCtaSection />
       </main>
-      <footer className="border-border border-t px-4 py-8 md:px-8">
+      <footer className="border-border border-t-2 px-4 py-8 md:px-8">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
           <EthioClawBrand size="sm" />
           <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
