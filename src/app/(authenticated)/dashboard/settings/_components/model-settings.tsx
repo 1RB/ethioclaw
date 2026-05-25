@@ -26,11 +26,6 @@ const MODELS = [
     description: "Fast & capable",
   },
   {
-    value: "accounts/fireworks/models/gpt-oss-120b",
-    label: "GPT-OSS 120B",
-    description: "Open weights heavyweight",
-  },
-  {
     value: "accounts/fireworks/models/deepseek-v4-pro",
     label: "DeepSeek V4 Pro",
     description: "Reasoning specialist",

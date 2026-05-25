@@ -16,6 +16,8 @@ import { getIntegrationAuthLinks } from "./getIntegrationAuthLinks";
 import { saveOnboardingState } from "./saveOnboardingState";
 import { checkConnectionStatus } from "./checkConnectionStatus";
 
+import { getUsage } from "./getUsage";
+
 export const trustclawRouter = router({
   getInstance,
   getStatus,
@@ -33,4 +35,5 @@ export const trustclawRouter = router({
   getIntegrationAuthLinks,
   saveOnboardingState,
   checkConnectionStatus,
+  getUsage,
 });

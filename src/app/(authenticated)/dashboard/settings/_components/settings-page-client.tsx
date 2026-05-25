@@ -10,6 +10,7 @@ import { TelegramSettings } from "./telegram-settings";
 import { CronJobsSettings } from "./cron-jobs-settings";
 import { MemorySettings } from "./memory-settings";
 import { DangerZone } from "./danger-zone";
+import { UsageSettings } from "./usage-settings";
 import { SettingsPageSkeleton } from "./settings-page.skeleton";
 
 export function SettingsPageClient() {
@@ -52,6 +53,10 @@ export function SettingsPageClient() {
         <Settings className="text-muted-foreground h-5 w-5" />
         <h1 className="text-xl font-semibold md:text-2xl">Settings</h1>
       </div>
+
+      <ErrorBoundary>
+        <UsageSettings />
+      </ErrorBoundary>
 
       <ErrorBoundary>
         <ModelSettings currentModel={instance.anthropicModel} />
