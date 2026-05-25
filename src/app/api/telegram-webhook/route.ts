@@ -113,7 +113,7 @@ async function handleStartCommand(chatId: string, text: string): Promise<void> {
   if (!token) {
     await sendTelegramMessage(
       chatId,
-      `Welcome! To link your TrustClaw agent, use the link from ${env.NEXT_PUBLIC_APP_URL}/dashboard/settings.`,
+      `Welcome! To link your EthioClaw agent, use the link from ${env.NEXT_PUBLIC_APP_URL}/dashboard/settings.`,
     );
     return;
   }
@@ -141,7 +141,7 @@ async function handleStartCommand(chatId: string, text: string): Promise<void> {
 
   await sendTelegramMessage(
     chatId,
-    "Linked! I'm your TrustClaw by Composio agent. Send me a message anytime.",
+    "Linked! I'm your EthioClaw agent. Send me a message anytime.",
   );
 }
 
@@ -150,87 +150,97 @@ async function handleRegularMessage(
   text: string,
   updateId: number,
 ): Promise<void> {
-  const instance = await db.composioClawInstance.findUnique({
-    where: { telegramChatId: chatId },
-    select: { id: true },
-  });
-
-  if (!instance) {
-    await sendTelegramMessage(
-      chatId,
-      `I don't recognize this chat. Link me from ${env.NEXT_PUBLIC_APP_URL}/dashboard/settings`,
-    );
-    return;
-  }
-
-  // Mark this update as the active generation for this instance.
-  // If a previous generation is running, it will detect this change
-  // in its onStepFinish and abort.
-  await setTelegramActive(instance.id, updateId);
-
-  await sendChatAction(chatId, "typing");
-
-  const prepareResult = await prepareAgentRun({
-    instanceId: instance.id,
-    userMessage: text,
-    source: "telegram",
-  });
-
-  const { agent, messages } = prepareResult.result;
-
-  let accumulatedText = "";
-  const abortController = new AbortController();
-
   try {
-    const result = await agent.generate({
-      prompt: messages,
-      abortSignal: abortController.signal,
-      onStepFinish: async (step) => {
-        // Check if a newer message has superseded this one
-        const activeUpdateId = await getTelegramActive(instance.id);
-        if (activeUpdateId !== null && activeUpdateId !== updateId) {
-          abortController.abort();
-          return;
-        }
-
-        // Send tool call descriptions (with results for connection URLs)
-        for (let i = 0; i < step.toolCalls.length; i++) {
-          const tc = step.toolCalls[i]!;
-          const tr = step.toolResults[i];
-          const tcInput = toPlainRecordSafe(tc.input);
-          const desc = describeToolCall({
-            toolName: tc.toolName,
-            input: tcInput,
-            ...(tr ? { result: { output: tr.output } } : {}),
-          });
-          if (desc) {
-            await sendTelegramMessage(chatId, desc);
-          }
-        }
-
-        // Send any text generated in this step
-        const stepText = stripToolResultEchoes(step.text).trim();
-        if (stepText) {
-          accumulatedText += stepText;
-          await sendTelegramMessage(chatId, stepText.slice(0, 4096));
-          await sendChatAction(chatId, "typing");
-        }
-      },
+    const instance = await db.composioClawInstance.findUnique({
+      where: { telegramChatId: chatId },
+      select: { id: true },
     });
 
-    // Send final text only if it wasn't already sent via onStepFinish
-    const finalText = stripToolResultEchoes(result.text).trim();
-    if (!accumulatedText && finalText) {
-      await sendTelegramMessage(chatId, finalText.slice(0, 4096));
-    } else if (!accumulatedText && !finalText) {
-      await sendTelegramMessage(chatId, "I processed your request.");
-    }
-  } catch (error) {
-    // If aborted by a newer message, send "-" to indicate truncation
-    if (abortController.signal.aborted) {
-      await sendTelegramMessage(chatId, "-");
+    if (!instance) {
+      await sendTelegramMessage(
+        chatId,
+        `I don't recognize this chat. Link me from ${env.NEXT_PUBLIC_APP_URL}/dashboard/settings`,
+      );
       return;
     }
-    throw error;
+
+    // Mark this update as the active generation for this instance.
+    // If a previous generation is running, it will detect this change
+    // in its onStepFinish and abort.
+    await setTelegramActive(instance.id, updateId);
+
+    await sendChatAction(chatId, "typing");
+
+    const prepareResult = await prepareAgentRun({
+      instanceId: instance.id,
+      userMessage: text,
+      source: "telegram",
+    });
+
+    const { agent, messages } = prepareResult.result;
+
+    let accumulatedText = "";
+    const abortController = new AbortController();
+
+    try {
+      const result = await agent.generate({
+        prompt: messages,
+        abortSignal: abortController.signal,
+        onStepFinish: async (step) => {
+          // Check if a newer message has superseded this one
+          const activeUpdateId = await getTelegramActive(instance.id);
+          if (activeUpdateId !== null && activeUpdateId !== updateId) {
+            abortController.abort();
+            return;
+          }
+
+          // Send tool call descriptions (with results for connection URLs)
+          for (let i = 0; i < step.toolCalls.length; i++) {
+            const tc = step.toolCalls[i]!;
+            const tr = step.toolResults[i];
+            const tcInput = toPlainRecordSafe(tc.input);
+            const desc = describeToolCall({
+              toolName: tc.toolName,
+              input: tcInput,
+              ...(tr ? { result: { output: tr.output } } : {}),
+            });
+            if (desc) {
+              await sendTelegramMessage(chatId, desc);
+            }
+          }
+
+          // Send any text generated in this step
+          const stepText = stripToolResultEchoes(step.text).trim();
+          if (stepText) {
+            accumulatedText += stepText;
+            await sendTelegramMessage(chatId, stepText.slice(0, 4096));
+            await sendChatAction(chatId, "typing");
+          }
+        },
+      });
+
+      // Send final text only if it wasn't already sent via onStepFinish
+      const finalText = stripToolResultEchoes(result.text).trim();
+      if (!accumulatedText && finalText) {
+        await sendTelegramMessage(chatId, finalText.slice(0, 4096));
+      } else if (!accumulatedText && !finalText) {
+        await sendTelegramMessage(chatId, "I processed your request.");
+      }
+    } catch (error) {
+      // If aborted by a newer message, send "-" to indicate truncation
+      if (abortController.signal.aborted) {
+        await sendTelegramMessage(chatId, "-");
+        return;
+      }
+      throw error;
+    }
+  } catch (error) {
+    const errMsg =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("[telegram-webhook] handleRegularMessage error:", error);
+    await sendTelegramMessage(
+      chatId,
+      `Sorry, something went wrong: ${errMsg.slice(0, 500)}`,
+    );
   }
 }
