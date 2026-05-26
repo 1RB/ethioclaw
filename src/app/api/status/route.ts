@@ -17,7 +17,6 @@ async function checkFireworks(): Promise<ServiceStatus> {
     const res = await fetch("https://api.fireworks.ai/inference/v1/models", {
       method: "GET",
       headers: { Authorization: `Bearer ${env.FIREWORKS_API_KEY}` },
-      // short timeout so we don't hang
       signal: AbortSignal.timeout(8000),
     });
     const latencyMs = Date.now() - start;
@@ -99,14 +98,15 @@ export async function GET() {
     checkTelegram(),
   ]);
 
-  const overall =
-    fireworks.status === "error" || database.status === "error"
-      ? "degraded"
-      : "ok";
+  const hasError = fireworks.status === "error" || database.status === "error" || telegram.status === "error";
+  const hasDegraded = fireworks.status === "degraded" || database.status === "degraded" || telegram.status === "degraded";
+
+  const overall = hasError ? "degraded" : hasDegraded ? "degraded" : "ok";
 
   return NextResponse.json({
     overall,
     timestamp: new Date().toISOString(),
+    region: process.env.VERCEL_REGION ?? "unknown",
     services: { fireworks, database, telegram },
   });
 }
