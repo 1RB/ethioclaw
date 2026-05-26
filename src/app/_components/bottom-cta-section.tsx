@@ -4,7 +4,7 @@ import { AnimateOnView } from "~/components/core/animate-on-view";
 
 export function BottomCtaSection() {
   return (
-    <section className="relative overflow-hidden border-t-2 border-border px-6 py-20 md:px-8 md:py-28 lg:py-36">
+    <section className="relative overflow-hidden px-6 py-20 md:px-8 md:py-28 lg:py-36">
       <AnimateOnView className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-8 text-center">
         <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">
           Ready to meet your personal assistant?

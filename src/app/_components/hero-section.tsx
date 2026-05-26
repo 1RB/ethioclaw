@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { AnimateOnView } from "~/components/core/animate-on-view";
 import { ChatMockup } from "./chat-mockup";
@@ -7,7 +7,7 @@ import { TOOL_LOGOS } from "~/lib/landing-assets";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-border px-6 py-24 sm:px-8 sm:py-32 md:px-10 md:py-40 lg:py-48">
+    <section className="relative overflow-hidden px-6 py-24 sm:px-8 sm:py-32 md:px-10 md:py-40 lg:py-48">
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-10 sm:gap-14 lg:flex-row lg:items-center lg:gap-20">
         <AnimateOnView
           className="flex flex-1 flex-col items-center gap-5 text-center lg:items-start lg:text-left"
@@ -63,8 +63,8 @@ export function HeroSection() {
               href="/login"
               className="inline-flex items-center gap-2 border-2 border-border px-6 py-3 text-sm font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
             >
-              <Zap className="h-4 w-4" />
-              Deploy in seconds
+              <ArrowRight className="h-4 w-4" />
+              Launch your agent
               <ArrowRight className="h-4 w-4" />
             </Link>
           </AnimateOnView>

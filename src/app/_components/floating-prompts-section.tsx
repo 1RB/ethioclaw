@@ -52,7 +52,7 @@ const MONOCHROME_LOGOS = new Set(["github", "notion", "linear"]);
 
 export function FloatingPromptsSection() {
   return (
-    <section className="relative overflow-hidden border-t-2 border-border px-6 py-20 sm:px-8 sm:py-28 md:px-10 md:py-36 lg:py-44">
+    <section className="relative overflow-hidden px-6 py-20 sm:px-8 sm:py-28 md:px-10 md:py-36 lg:py-44">
       <div className="mx-auto max-w-6xl">
         <AnimateOnView
           as="h2"

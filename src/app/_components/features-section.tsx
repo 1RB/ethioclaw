@@ -201,7 +201,7 @@ function MessagingFeatureCard({ index }: { index: number }) {
 
 export function FeaturesSection() {
   return (
-    <section className="relative border-b-2 border-border px-6 py-20 sm:px-8 sm:py-28 md:px-10 md:py-36 lg:py-44">
+    <section className="relative px-6 py-20 sm:px-8 sm:py-28 md:px-10 md:py-36 lg:py-44">
       <div className="relative z-10 mx-auto max-w-6xl">
         <AnimateOnView className="mb-12 md:mb-20">
           <p className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">
