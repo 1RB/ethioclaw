@@ -68,60 +68,102 @@ function IndicatorIcon({ type }: { type: Indicator }) {
   }
 }
 
+function ComparisonCard({ row, index }: { row: ComparisonRow; index: number }) {
+  return (
+    <AnimateOnView delay={index * 0.05} margin="-40px">
+      <div className="rounded-xl border border-border bg-card p-4">
+        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          {row.category}
+        </p>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start gap-3">
+            <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-primary">
+                EthioClaw
+              </p>
+              <p className="text-sm text-foreground">{row.ethioclaw}</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <IndicatorIcon type={row.vanillaIndicator} />
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Vanilla OpenClaw
+              </p>
+              <p className="text-sm text-muted-foreground">{row.vanilla}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </AnimateOnView>
+  );
+}
+
 export function ComparisonSection() {
   return (
     <section className="px-4 py-16 md:px-6 md:py-24 lg:py-32">
       <div className="mx-auto max-w-4xl">
         <AnimateOnView
           as="h2"
-          className="mb-10 text-center text-2xl font-bold tracking-tight text-foreground md:mb-16 md:text-3xl lg:text-4xl"
+          className="mb-10 text-center text-2xl font-bold tracking-tight text-foreground sm:mb-12 md:mb-16 md:text-3xl lg:text-4xl"
         >
           Why is EthioClaw better?
         </AnimateOnView>
 
+        {/* Mobile: card grid */}
+        <div className="grid grid-cols-1 gap-3 sm:hidden">
+          {ROWS.map((row, index) => (
+            <ComparisonCard key={row.category} row={row} index={index} />
+          ))}
+        </div>
+
+        {/* Desktop: table */}
         <AnimateOnView
-          className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0"
+          className="hidden sm:block"
           delay={0.1}
           margin="-50px"
         >
-          <table className="w-full min-w-[500px] border-collapse">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="py-4 pr-4 text-left" />
-                <th className="px-4 py-4 text-center text-sm font-semibold text-foreground md:text-base">
-                  EthioClaw
-                </th>
-                <th className="px-4 py-4 text-center text-sm font-semibold text-muted-foreground md:text-base">
-                  Vanilla OpenClaw
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {ROWS.map((row) => (
-                <tr key={row.category} className="border-b border-border">
-                  <td className="py-4 pr-4 text-sm font-medium text-foreground md:text-base">
-                    {row.category}
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col items-center gap-1.5 text-center">
-                      <IndicatorIcon type="check" />
-                      <span className="text-xs text-muted-foreground md:text-sm">
-                        {row.ethioclaw}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col items-center gap-1.5 text-center">
-                      <IndicatorIcon type={row.vanillaIndicator} />
-                      <span className="text-xs text-muted-foreground md:text-sm">
-                        {row.vanilla}
-                      </span>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto rounded-xl border border-border">
+            <table className="w-full min-w-[540px] border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  <th className="py-4 pr-4 pl-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground" />
+                  <th className="px-4 py-4 text-center text-sm font-semibold text-foreground md:text-base">
+                    EthioClaw
+                  </th>
+                  <th className="px-4 py-4 text-center text-sm font-semibold text-muted-foreground md:text-base">
+                    Vanilla OpenClaw
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {ROWS.map((row) => (
+                  <tr key={row.category} className="border-b border-border last:border-0">
+                    <td className="py-4 pr-4 pl-4 text-sm font-medium text-foreground md:text-base">
+                      {row.category}
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col items-center gap-1.5 text-center">
+                        <IndicatorIcon type="check" />
+                        <span className="text-xs text-muted-foreground md:text-sm">
+                          {row.ethioclaw}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col items-center gap-1.5 text-center">
+                        <IndicatorIcon type={row.vanillaIndicator} />
+                        <span className="text-xs text-muted-foreground md:text-sm">
+                          {row.vanilla}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </AnimateOnView>
 
         <AnimateOnView

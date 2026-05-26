@@ -130,7 +130,7 @@ export function TestimonialsSection() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
           {TWEETS.map((tweet, index) => (
             <TweetCard key={tweet.handle} tweet={tweet} index={index} />
           ))}

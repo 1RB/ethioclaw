@@ -26,7 +26,7 @@ const SCATTER_TIMING = [
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b border-border px-4 py-20 md:px-6 md:py-32 lg:py-40">
+    <section className="relative overflow-hidden border-b border-border px-4 py-16 sm:py-20 md:px-6 md:py-32 lg:py-40">
       <Image
         src={RAYS_LEFT}
         alt=""
@@ -62,19 +62,18 @@ export function HeroSection() {
             />
           </div>
         );
-      })
-      }
+      })}
 
       <div className="pointer-events-none absolute inset-0 hidden lg:block lg:z-[5] lg:bg-[radial-gradient(ellipse_120%_140%_at_0%_50%,_var(--background)_40%,_transparent_100%)]" />
 
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-12 lg:flex-row lg:items-center lg:gap-16">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:gap-16">
         <AnimateOnView
-          className="flex flex-1 flex-col items-center gap-6 text-center lg:items-start lg:text-left"
+          className="flex flex-1 flex-col items-center gap-5 text-center lg:items-start lg:text-left"
           duration={0.6}
         >
           <AnimateOnView
             as="h1"
-            className="text-3xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl"
+            className="text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl"
             delay={0.1}
           >
             Your AI that does things while you sleep.{" "}
@@ -82,15 +81,15 @@ export function HeroSection() {
           </AnimateOnView>
 
           <AnimateOnView
-            className="flex items-center justify-center lg:hidden"
+            className="flex w-full items-center justify-center overflow-x-auto py-1 lg:hidden"
             animation="fade-in"
             delay={0.15}
           >
-            <div className="flex -space-x-2">
+            <div className="flex shrink-0 -space-x-2">
               {TOOL_LOGOS.map((slug) => (
                 <div
                   key={slug}
-                  className="relative h-10 w-10 rounded-full border-2 border-background bg-card p-1.5 shadow-sm"
+                  className="relative h-9 w-9 rounded-full border-2 border-background bg-card p-1.5 shadow-sm sm:h-10 sm:w-10"
                 >
                   <Image
                     src={`/images/logos/${slug}.svg`}
@@ -107,7 +106,7 @@ export function HeroSection() {
 
           <AnimateOnView
             as="p"
-            className="max-w-2xl text-base text-muted-foreground md:text-lg lg:text-xl"
+            className="max-w-2xl text-base text-muted-foreground sm:text-lg lg:text-xl"
             delay={0.2}
           >
             EthioClaw is a 24/7 AI assistant with 1000+ tools via{" "}
@@ -119,17 +118,17 @@ export function HeroSection() {
           <AnimateOnView delay={0.25}>
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 text-lg font-semibold text-foreground underline underline-offset-4 md:text-xl lg:text-2xl"
+              className="inline-flex items-center gap-2 text-lg font-semibold text-foreground underline underline-offset-4 sm:text-xl lg:text-2xl"
             >
-              <Zap className="h-5 w-5 md:h-6 md:w-6" />
+              <Zap className="h-5 w-5 sm:h-6 sm:w-6" />
               Deploy in seconds.
-              <ArrowRight className="h-5 w-5 md:h-6 md:w-6" />
+              <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" />
             </Link>
           </AnimateOnView>
         </AnimateOnView>
 
         <AnimateOnView
-          className="flex flex-1 justify-center lg:justify-end"
+          className="flex w-full flex-1 justify-center lg:w-auto lg:justify-end"
           animation="fade-in-right"
           delay={0.3}
           duration={0.7}

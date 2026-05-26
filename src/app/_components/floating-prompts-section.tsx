@@ -149,8 +149,8 @@ export function FloatingPromptsSection() {
 
         {/* Mobile: stacked layout */}
         <div className="flex flex-col gap-3 lg:hidden">
-          {/* Horizontal icon strip */}
-          <div className="mb-4 flex items-center justify-center gap-3 overflow-x-auto">
+          {/* Horizontal icon strip - scrollable */}
+          <div className="mb-4 flex items-center justify-center gap-3 overflow-x-auto py-2">
             {APP_ICONS.slice(0, 8).map((slug) => (
               <div key={slug} className="shrink-0 opacity-30">
                 <Image

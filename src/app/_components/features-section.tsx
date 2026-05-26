@@ -130,7 +130,7 @@ function IntegrationsFeatureCard({ index }: { index: number }) {
               Connect to all of your favourite apps in a single click.
             </p>
           </div>
-          <div className="grid grid-cols-5 gap-2 pt-1">
+          <div className="grid grid-cols-4 gap-2 pt-1 sm:grid-cols-5">
             {INTEGRATION_TOOLS.map((tool) => (
               <div
                 key={tool.slug}
