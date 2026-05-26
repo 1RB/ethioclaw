@@ -24,20 +24,20 @@ const RISKS = [
 
 export function SecuritySection() {
   return (
-    <section className="px-4 py-16 md:px-6 md:py-24 lg:py-32">
+    <section className="px-4 py-20 md:px-6 md:py-28 lg:py-36">
       <div className="mx-auto max-w-4xl">
-        <AnimateOnView className="mb-10 md:mb-16">
-          <p className="mb-4 font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground">
+        <AnimateOnView className="mb-12 md:mb-20">
+          <p className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Why not vanilla OpenClaw?
           </p>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl">
+          <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">
             OpenClaw is powerful.
             <br />
             Its default setup is a security liability.
           </h2>
         </AnimateOnView>
 
-        <div className="divide-y divide-border">
+        <div className="divide-y-2 divide-border">
           {RISKS.map((risk, index) => (
             <AnimateOnView
               key={risk.label}
@@ -47,7 +47,7 @@ export function SecuritySection() {
             >
               <div className="flex shrink-0 items-center gap-3 md:w-64">
                 <AlertTriangle className="h-5 w-5 shrink-0 text-muted-foreground" />
-                <span className="font-mono text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   {risk.label}
                 </span>
               </div>

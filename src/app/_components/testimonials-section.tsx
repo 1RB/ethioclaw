@@ -25,7 +25,7 @@ const TWEETS: Tweet[] = [
     retweets: 87,
     likes: 342,
     views: "12.4K",
-    timestamp: "3:42 PM · Feb 8, 2026",
+    timestamp: "3:42 PM \u00b7 Feb 8, 2026",
   },
   {
     displayName: "Palash Kala",
@@ -36,7 +36,7 @@ const TWEETS: Tweet[] = [
     retweets: 28,
     likes: 189,
     views: "3.2K",
-    timestamp: "9:15 AM · Feb 10, 2026",
+    timestamp: "9:15 AM \u00b7 Feb 10, 2026",
   },
   {
     displayName: "Soham",
@@ -47,7 +47,7 @@ const TWEETS: Tweet[] = [
     retweets: 93,
     likes: 412,
     views: "11.3K",
-    timestamp: "11:30 AM · Feb 11, 2026",
+    timestamp: "11:30 AM \u00b7 Feb 11, 2026",
   },
   {
     displayName: "Karan Vaidya",
@@ -58,14 +58,14 @@ const TWEETS: Tweet[] = [
     retweets: 156,
     likes: 847,
     views: "38.2K",
-    timestamp: "2:08 PM · Feb 12, 2026",
+    timestamp: "2:08 PM \u00b7 Feb 12, 2026",
   },
 ];
 
 function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
   return (
     <AnimateOnView
-      className="rounded-xl border border-border bg-card p-4"
+      className="border-2 border-border bg-card p-4"
       delay={index * 0.1}
       margin="-60px"
     >
@@ -77,7 +77,7 @@ function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
           width={40}
           height={40}
           loading="lazy"
-          className="h-10 w-10 rounded-full object-cover"
+          className="h-10 w-10 object-cover"
         />
         <div>
           <div className="text-sm font-bold text-foreground">
@@ -122,10 +122,10 @@ function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
 
 export function TestimonialsSection() {
   return (
-    <section className="relative overflow-hidden border-t border-border px-4 py-16 md:px-6 md:py-24 lg:py-32">
+    <section className="relative overflow-hidden border-t-2 border-border px-4 py-20 md:px-6 md:py-28 lg:py-36">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-10 text-center md:mb-16">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl">
+        <div className="mb-12 text-center md:mb-20">
+          <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">
             No seriously, stop giving OpenClaw your passwords.
           </h2>
         </div>

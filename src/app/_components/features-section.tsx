@@ -10,7 +10,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { AnimateOnView } from "~/components/core/animate-on-view";
-import { QUARTER_CIRCLE } from "~/lib/landing-assets";
 
 interface Feature {
   icon: LucideIcon;
@@ -77,19 +76,19 @@ function FeatureCard({
 }) {
   return (
     <AnimateOnView delay={index * 0.1}>
-      <div className="h-full rounded-xl bg-gradient-to-br from-border via-border/50 to-transparent p-px">
-        <div className="flex h-full flex-col gap-4 rounded-xl bg-card p-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted shadow-[0_0_15px_oklch(0.488_0.243_264.376/0.2)]">
-            <feature.icon className="h-5 w-5 text-foreground" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <h3 className="font-semibold text-foreground">{feature.title}</h3>
-            {feature.description && (
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {feature.description}
-              </p>
-            )}
-          </div>
+      <div className="h-full border-2 border-border bg-card p-6">
+        <div className="flex h-10 w-10 items-center justify-center border border-border bg-muted">
+          <feature.icon className="h-5 w-5 text-foreground" />
+        </div>
+        <div className="mt-4 flex flex-col gap-1.5">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+            {feature.title}
+          </h3>
+          {feature.description && (
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {feature.description}
+            </p>
+          )}
         </div>
       </div>
     </AnimateOnView>
@@ -117,40 +116,38 @@ const INTEGRATION_TOOLS: { slug: string; name: string }[] = [
 function IntegrationsFeatureCard({ index }: { index: number }) {
   return (
     <AnimateOnView delay={index * 0.1}>
-      <div className="h-full rounded-xl bg-gradient-to-br from-border via-border/50 to-transparent p-px">
-        <div className="flex h-full flex-col gap-4 rounded-xl bg-card p-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted shadow-[0_0_15px_oklch(0.488_0.243_264.376/0.2)]">
-            <Layers className="h-5 w-5 text-foreground" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <h3 className="font-semibold text-foreground">
-              1000+ Integrations
-            </h3>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Connect to all of your favourite apps in a single click.
-            </p>
-          </div>
-          <div className="grid grid-cols-4 gap-2 pt-1 sm:grid-cols-5">
-            {INTEGRATION_TOOLS.map((tool) => (
-              <div
-                key={tool.slug}
-                className="flex items-center justify-center rounded-lg border border-border bg-background p-1.5"
-                title={tool.name}
-              >
-                <Image
-                  src={`/images/logos/${tool.slug}.svg`}
-                  alt={tool.name}
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
-                />
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-xs text-muted-foreground">
-            + 985 more
+      <div className="h-full border-2 border-border bg-card p-6">
+        <div className="flex h-10 w-10 items-center justify-center border border-border bg-muted">
+          <Layers className="h-5 w-5 text-foreground" />
+        </div>
+        <div className="mt-4 flex flex-col gap-1.5">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+            1000+ Integrations
+          </h3>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Connect to all of your favourite apps in a single click.
           </p>
         </div>
+        <div className="mt-4 grid grid-cols-4 gap-2 pt-1 sm:grid-cols-5">
+          {INTEGRATION_TOOLS.map((tool) => (
+            <div
+              key={tool.slug}
+              className="flex items-center justify-center border border-border bg-background p-1.5"
+              title={tool.name}
+            >
+              <Image
+                src={`/images/logos/${tool.slug}.svg`}
+                alt={tool.name}
+                width={20}
+                height={20}
+                className="h-5 w-5"
+              />
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          + 985 more
+        </p>
       </div>
     </AnimateOnView>
   );
@@ -159,45 +156,43 @@ function IntegrationsFeatureCard({ index }: { index: number }) {
 function MessagingFeatureCard({ index }: { index: number }) {
   return (
     <AnimateOnView delay={index * 0.1}>
-      <div className="h-full rounded-xl bg-gradient-to-br from-border via-border/50 to-transparent p-px">
-        <div className="flex h-full flex-col gap-4 rounded-xl bg-card p-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted shadow-[0_0_15px_oklch(0.488_0.243_264.376/0.2)]">
-            <MessageCircle className="h-5 w-5 text-foreground" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <h3 className="font-semibold text-foreground">
-              Messaging Platforms
-            </h3>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Chat with your agent from anywhere you already work.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 pt-1">
-            {MESSAGING_PLATFORMS.map((platform) => (
-              <div
-                key={platform.slug}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs ${
-                  platform.disabled
-                    ? "border-border bg-muted text-muted-foreground"
-                    : "border-primary/30 bg-primary/5 text-primary"
-                }`}
-              >
-                <Image
-                  src={`/images/logos/${platform.slug}.svg`}
-                  alt={platform.name}
-                  width={14}
-                  height={14}
-                  className="h-3.5 w-3.5"
-                />
-                {platform.name}
-                {platform.disabled && (
-                  <span className="text-[10px] text-muted-foreground/60">
-                    soon
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+      <div className="h-full border-2 border-border bg-card p-6">
+        <div className="flex h-10 w-10 items-center justify-center border border-border bg-muted">
+          <MessageCircle className="h-5 w-5 text-foreground" />
+        </div>
+        <div className="mt-4 flex flex-col gap-1.5">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+            Messaging Platforms
+          </h3>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Chat with your agent from anywhere you already work.
+          </p>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2 pt-1">
+          {MESSAGING_PLATFORMS.map((platform) => (
+            <div
+              key={platform.slug}
+              className={`inline-flex items-center gap-1.5 border px-3 py-1 text-xs ${
+                platform.disabled
+                  ? "border-border bg-muted text-muted-foreground"
+                  : "border-primary/30 bg-primary/5 text-primary"
+              }`}
+            >
+              <Image
+                src={`/images/logos/${platform.slug}.svg`}
+                alt={platform.name}
+                width={14}
+                height={14}
+                className="h-3.5 w-3.5"
+              />
+              {platform.name}
+              {platform.disabled && (
+                <span className="text-[10px] text-muted-foreground/60">
+                  soon
+                </span>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </AnimateOnView>
@@ -206,22 +201,13 @@ function MessagingFeatureCard({ index }: { index: number }) {
 
 export function FeaturesSection() {
   return (
-    <section className="relative border-b border-border px-4 py-16 md:px-6 md:py-24 lg:py-32">
-      <Image
-        src={QUARTER_CIRCLE}
-        alt=""
-        aria-hidden
-        width={800}
-        height={800}
-        priority={false}
-        className="pointer-events-none absolute -right-40 top-0 hidden h-[500px] w-[500px] opacity-[0.04] dark:block md:h-[700px] md:w-[700px]"
-      />
+    <section className="relative border-b-2 border-border px-4 py-20 md:px-6 md:py-28 lg:py-36">
       <div className="relative z-10 mx-auto max-w-6xl">
-        <AnimateOnView className="mb-10 md:mb-16">
+        <AnimateOnView className="mb-12 md:mb-20">
           <p className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Why EthioClaw?
           </p>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl">
+          <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">
             Secure by default. Powerful by design.
           </h2>
         </AnimateOnView>

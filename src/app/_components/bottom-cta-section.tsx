@@ -1,39 +1,23 @@
-import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { AnimateOnView } from "~/components/core/animate-on-view";
-import { CUBE } from "~/lib/landing-assets";
 
 export function BottomCtaSection() {
   return (
-    <section className="relative overflow-hidden border-t border-border px-4 py-16 md:px-6 md:py-24 lg:py-32">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.488_0.243_264.376/0.08),transparent_70%)]" />
-      <Image
-        src={CUBE}
-        alt=""
-        aria-hidden
-        width={151}
-        height={139}
-        priority={false}
-        className="pointer-events-none absolute -right-6 bottom-10 hidden h-20 w-20 opacity-15 dark:block md:right-20 md:h-28 md:w-28"
-      />
-
-      <AnimateOnView className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl">
+    <section className="relative overflow-hidden border-t-2 border-border px-4 py-20 md:px-6 md:py-28 lg:py-36">
+      <AnimateOnView className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-8 text-center">
+        <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">
           Ready to meet your personal assistant?
         </h2>
-        <p className="text-base text-muted-foreground md:text-lg">
+        <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
           Your AI is waiting. Set it up in seconds.
         </p>
-        <Link href="/login">
-          <Button
-            size="lg"
-            className="h-12 w-full px-8 text-base sm:w-auto"
-          >
-            Get Started Free
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-2 border-2 border-border px-8 py-3 text-sm font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+        >
+          Get Started Free
+          <ArrowRight className="h-4 w-4" />
         </Link>
       </AnimateOnView>
     </section>

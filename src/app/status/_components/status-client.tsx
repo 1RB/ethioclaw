@@ -7,14 +7,12 @@ interface ServiceStatus {
   status: "ok" | "degraded" | "error" | "unknown";
   latencyMs: number;
   message?: string;
-  detail?: Record<string, unknown>;
 }
 
 interface StatusData {
   overall: string;
   timestamp: string;
   region: string;
-  version: string;
   services: {
     fireworks: ServiceStatus;
     database: ServiceStatus;
@@ -27,10 +25,6 @@ interface HistoryEntry {
   overall: string;
   services: Record<string, ServiceStatus>;
 }
-
-/* ------------------------------------------------------------------ */
-/*  CONFIG                                                            */
-/* ------------------------------------------------------------------ */
 
 const SERVICE_META: Record<string, { label: string; description: string }> = {
   fireworks: {
@@ -49,10 +43,6 @@ const SERVICE_META: Record<string, { label: string; description: string }> = {
 
 const HISTORY_KEY = "ethioclaw-status-history";
 const MAX_HISTORY = 90;
-
-/* ------------------------------------------------------------------ */
-/*  HELPERS                                                           */
-/* ------------------------------------------------------------------ */
 
 function loadHistory(): HistoryEntry[] {
   try {
@@ -123,10 +113,6 @@ function statusLabel(status: string): string {
   }
 }
 
-/* ------------------------------------------------------------------ */
-/*  MAIN COMPONENT                                                    */
-/* ------------------------------------------------------------------ */
-
 export function StatusClient() {
   const [data, setData] = useState<StatusData | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -179,8 +165,8 @@ export function StatusClient() {
   const metaEntries = Object.entries(data?.services ?? {});
 
   return (
-    <div className="flex flex-col gap-0 font-mono">
-      {/* ── Title + Controls ── */}
+    <div className="flex flex-col gap-0">
+      {/* Title + Controls */}
       <div className="flex flex-col justify-between gap-4 border-b-2 border-border py-4 sm:flex-row sm:items-baseline">
         <div>
           <h1 className="text-xl font-bold uppercase tracking-tight text-foreground sm:text-2xl">
@@ -208,7 +194,7 @@ export function StatusClient() {
         </div>
       </div>
 
-      {/* ── Overall ── */}
+      {/* Overall */}
       <div className="border-b-2 border-border py-6 sm:py-8">
         <div className="flex items-center gap-3">
           <div className="h-3 w-3" style={{ backgroundColor: overallColor }} />
@@ -227,12 +213,12 @@ export function StatusClient() {
         </div>
         {data && (
           <p className="mt-2 text-[10px] text-muted-foreground">
-            {fmtTime(new Date(data.timestamp))} UTC · REGION {data.region.toUpperCase()} · {data.version.toUpperCase()}
+            {fmtTime(new Date(data.timestamp))} UTC · REGION {data.region.toUpperCase()}
           </p>
         )}
       </div>
 
-      {/* ── Error ── */}
+      {/* Error */}
       {error && (
         <div className="border-b-2 border-[#ff0033] py-3" style={{ backgroundColor: "#1a0005" }}>
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#ff0033]">
@@ -241,7 +227,7 @@ export function StatusClient() {
         </div>
       )}
 
-      {/* ── Services ── */}
+      {/* Services */}
       <div className="border-b-2 border-border py-4">
         <div className="mb-3 flex items-baseline justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -289,13 +275,6 @@ export function StatusClient() {
                         {svc.message}
                       </div>
                     )}
-                    {svc.detail && (
-                      <div className="mt-1 text-[10px] text-muted-foreground">
-                        {Object.entries(svc.detail)
-                          .map(([k, v]) => `${k}: ${String(v)}`)
-                          .join(" · ")}
-                      </div>
-                    )}
                   </div>
 
                   {/* Status */}
@@ -322,7 +301,7 @@ export function StatusClient() {
         )}
       </div>
 
-      {/* ── Response Times (flat bar list) ── */}
+      {/* Response Times */}
       {history.length > 1 && (
         <div className="border-b-2 border-border py-4">
           <div className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -372,7 +351,7 @@ export function StatusClient() {
         </div>
       )}
 
-      {/* ── Incidents ── */}
+      {/* Incidents */}
       <div className="border-b-2 border-border py-4">
         <div className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
           Incident History
@@ -430,7 +409,7 @@ export function StatusClient() {
         })()}
       </div>
 
-      {/* ── Footer ── */}
+      {/* Footer */}
       <div className="flex flex-col items-center justify-between gap-2 py-4 sm:flex-row">
         <span className="text-[10px] text-muted-foreground">
           AUTO-REFRESH 30s · {history.length} DATA POINTS

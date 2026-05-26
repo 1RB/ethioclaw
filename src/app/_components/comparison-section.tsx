@@ -1,5 +1,4 @@
 import { ArrowRight, CircleCheck, CircleX, AlertTriangle } from "lucide-react";
-import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { AnimateOnView } from "~/components/core/animate-on-view";
 
@@ -71,7 +70,7 @@ function IndicatorIcon({ type }: { type: Indicator }) {
 function ComparisonCard({ row, index }: { row: ComparisonRow; index: number }) {
   return (
     <AnimateOnView delay={index * 0.05} margin="-40px">
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="border-2 border-border bg-card p-4">
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {row.category}
         </p>
@@ -102,11 +101,11 @@ function ComparisonCard({ row, index }: { row: ComparisonRow; index: number }) {
 
 export function ComparisonSection() {
   return (
-    <section className="px-4 py-16 md:px-6 md:py-24 lg:py-32">
+    <section className="px-4 py-20 md:px-6 md:py-28 lg:py-36">
       <div className="mx-auto max-w-4xl">
         <AnimateOnView
           as="h2"
-          className="mb-10 text-center text-2xl font-bold tracking-tight text-foreground sm:mb-12 md:mb-16 md:text-3xl lg:text-4xl"
+          className="mb-12 text-center font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground sm:mb-16 md:mb-20 md:text-4xl lg:text-5xl"
         >
           Why is EthioClaw better?
         </AnimateOnView>
@@ -124,10 +123,10 @@ export function ComparisonSection() {
           delay={0.1}
           margin="-50px"
         >
-          <div className="overflow-x-auto rounded-xl border border-border">
+          <div className="overflow-x-auto border-2 border-border">
             <table className="w-full min-w-[540px] border-collapse">
               <thead>
-                <tr className="border-b border-border bg-muted/30">
+                <tr className="border-b-2 border-border bg-muted/30">
                   <th className="py-4 pr-4 pl-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground" />
                   <th className="px-4 py-4 text-center text-sm font-semibold text-foreground md:text-base">
                     EthioClaw
@@ -167,17 +166,15 @@ export function ComparisonSection() {
         </AnimateOnView>
 
         <AnimateOnView
-          className="mt-10 flex justify-center md:mt-16"
+          className="mt-12 flex justify-center md:mt-16"
           delay={0.2}
         >
-          <Link href="/login">
-            <Button
-              size="lg"
-              className="h-12 w-full px-8 text-base sm:w-auto"
-            >
-              Get Started
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 border-2 border-border px-8 py-3 text-sm font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+          >
+            Get Started
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </AnimateOnView>
       </div>

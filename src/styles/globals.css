@@ -5,7 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-ibm-plex-mono), ui-monospace, "IBM Plex Mono", monospace;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, "IBM Plex Mono", monospace;
 }
 
 @theme inline {
@@ -51,7 +53,7 @@
 
 :root {
   --radius: 0px;
-  --background: #fafafa;
+  --background: #f5f4f2;
   --foreground: #0a0a0a;
   --card: #ffffff;
   --card-foreground: #0a0a0a;
@@ -85,36 +87,36 @@
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --card: #0a0a0a;
-  --card-foreground: #ffffff;
-  --popover: #0a0a0a;
-  --popover-foreground: #ffffff;
+  --background: #0e1011;
+  --foreground: #c8c8cd;
+  --card: #0e1011;
+  --card-foreground: #c8c8cd;
+  --popover: #0e1011;
+  --popover-foreground: #c8c8cd;
   --primary: #39ff14;
   --primary-foreground: #0a0a0a;
   --secondary: #1a1a1a;
   --secondary-foreground: #ffffff;
   --muted: #1a1a1a;
-  --muted-foreground: #a0a0a0;
+  --muted-foreground: #888888;
   --accent: #39ff14;
   --accent-foreground: #0a0a0a;
   --destructive: #ff0033;
-  --border: #ffffff;
-  --input: #ffffff;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
   --ring: #39ff14;
   --chart-1: #39ff14;
   --chart-2: #ffffff;
-  --chart-3: #a0a0a0;
-  --chart-4: #0a0a0a;
+  --chart-3: #888888;
+  --chart-4: #0e1011;
   --chart-5: #ff0033;
-  --sidebar: #0a0a0a;
-  --sidebar-foreground: #ffffff;
+  --sidebar: #0e1011;
+  --sidebar-foreground: #c8c8cd;
   --sidebar-primary: #39ff14;
   --sidebar-primary-foreground: #0a0a0a;
   --sidebar-accent: #1a1a1a;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #ffffff;
+  --sidebar-accent-foreground: #c8c8cd;
+  --sidebar-border: #2a2a2a;
   --sidebar-ring: #39ff14;
 }
 
@@ -159,76 +161,6 @@
 @keyframes float-y {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
-}
-
-@keyframes float-y-sm {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes scatter-in {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-@keyframes blink {
-  0%, 90%, 100% { opacity: 1; }
-  95% { opacity: 0.3; }
-}
-
-@keyframes wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-3deg); }
-  75% { transform: rotate(3deg); }
-}
-
-@keyframes float-happy {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-12px) scale(1.05); }
-}
-
-@keyframes float-thinking {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-4px); }
-}
-
-@keyframes celebrate {
-  0% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.1) rotate(-5deg); }
-  50% { transform: scale(1.15) rotate(5deg); }
-  75% { transform: scale(1.1) rotate(-3deg); }
-  100% { transform: scale(1) rotate(0deg); }
-}
-
-@keyframes listening {
-  0%, 100% { transform: translateX(0px) translateY(0px); }
-  33% { transform: translateX(-2px) translateY(-2px); }
-  66% { transform: translateX(2px) translateY(-1px); }
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
 }
 
 @keyframes marquee {
@@ -288,24 +220,7 @@
   .brutalist-border {
     border-width: 2px;
   }
-  .glitch-text {
-    animation: glitch 4s infinite;
-  }
-  .scanlines {
-    position: relative;
-  }
-  .scanlines::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.04;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.25) 2px,
-      rgba(0, 0, 0, 0.25) 4px
-    );
+  .font-serif-display {
+    font-family: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
   }
 }

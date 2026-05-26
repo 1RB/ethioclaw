@@ -6,19 +6,6 @@ interface ServiceStatus {
   status: "ok" | "degraded" | "error" | "unknown";
   latencyMs: number;
   message?: string;
-  detail?: Record<string, unknown>;
-}
-
-interface StatusResponse {
-  overall: string;
-  timestamp: string;
-  region: string;
-  version: string;
-  services: {
-    fireworks: ServiceStatus;
-    database: ServiceStatus;
-    telegram: ServiceStatus;
-  };
 }
 
 async function checkFireworks(): Promise<ServiceStatus> {
@@ -34,32 +21,19 @@ async function checkFireworks(): Promise<ServiceStatus> {
     });
     const latencyMs = Date.now() - start;
     if (res.ok) {
-      const data = (await res.json()) as { data?: Array<{ id: string; owned_by?: string }> };
-      const models = data.data ?? [];
-      return {
-        status: "ok",
-        latencyMs,
-        message: `${models.length} models available`,
-        detail: {
-          modelCount: models.length,
-          firstModel: models[0]?.id ?? null,
-        },
-      };
+      return { status: "ok", latencyMs };
     }
     const body = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
     return {
       status: res.status === 412 ? "degraded" : "error",
       latencyMs,
       message: body.error?.message ?? `HTTP ${res.status}`,
-      detail: { httpStatus: res.status },
     };
   } catch (e) {
-    const latencyMs = Date.now() - start;
     return {
       status: "error",
-      latencyMs,
+      latencyMs: Date.now() - start,
       message: e instanceof Error ? e.message : "Network error",
-      detail: { type: e instanceof Error ? e.name : "Unknown" },
     };
   }
 }
@@ -68,17 +42,12 @@ async function checkDatabase(): Promise<ServiceStatus> {
   const start = Date.now();
   try {
     await db.$queryRaw`SELECT 1`;
-    return {
-      status: "ok",
-      latencyMs: Date.now() - start,
-      detail: { engine: "postgresql", query: "SELECT 1" },
-    };
+    return { status: "ok", latencyMs: Date.now() - start };
   } catch (e) {
     return {
       status: "error",
       latencyMs: Date.now() - start,
       message: e instanceof Error ? e.message : "DB error",
-      detail: { type: e instanceof Error ? e.name : "Unknown" },
     };
   }
 }
@@ -95,34 +64,27 @@ async function checkTelegram(): Promise<ServiceStatus> {
     );
     const latencyMs = Date.now() - start;
     if (res.ok) {
-      const data = (await res.json()) as { ok: boolean; result?: { username?: string; first_name?: string } };
+      const data = (await res.json()) as { ok: boolean };
       return {
         status: data.ok ? "ok" : "error",
         latencyMs,
-        message: data.ok ? `@${data.result?.username ?? "bot"}` : "Telegram API error",
-        detail: {
-          botName: data.result?.first_name ?? null,
-          botUsername: data.result?.username ?? null,
-        },
       };
     }
     return {
       status: "error",
       latencyMs,
       message: `HTTP ${res.status}`,
-      detail: { httpStatus: res.status },
     };
   } catch (e) {
     return {
       status: "error",
       latencyMs: Date.now() - start,
       message: e instanceof Error ? e.message : "Network error",
-      detail: { type: e instanceof Error ? e.name : "Unknown" },
     };
   }
 }
 
-export async function GET(): Promise<NextResponse<StatusResponse>> {
+export async function GET() {
   const [fireworks, database, telegram] = await Promise.all([
     checkFireworks(),
     checkDatabase(),
@@ -138,7 +100,6 @@ export async function GET(): Promise<NextResponse<StatusResponse>> {
     overall,
     timestamp: new Date().toISOString(),
     region: process.env.VERCEL_REGION ?? "unknown",
-    version: "v1",
     services: { fireworks, database, telegram },
   });
 }

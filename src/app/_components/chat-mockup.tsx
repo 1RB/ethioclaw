@@ -15,7 +15,7 @@ function ToolBadge({
 }) {
   return (
     <div
-      className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs"
+      className="inline-flex items-center gap-2 border border-border bg-card px-3 py-1.5 text-xs"
       style={{ animation: `fade-in-up 0.3s ease-out ${delay}s both` }}
     >
       <CheckCircle2 className="size-3.5 shrink-0 text-chart-2" />
@@ -33,7 +33,7 @@ function SearchResult({ delay }: { delay: number }) {
       className="font-mono text-xs"
       style={{ animation: `fade-in-up 0.3s ease-out ${delay}s both` }}
     >
-      <div className="space-y-2 rounded-lg border border-border bg-background py-2.5 pr-3">
+      <div className="space-y-2 border border-border bg-background py-2.5 pr-3">
         <div className="-ml-0.5 flex">
           <span className="w-5 shrink-0 text-center text-muted-foreground">
             ├
@@ -107,7 +107,7 @@ function ExecResult({ delay }: { delay: number }) {
       className="font-mono text-xs"
       style={{ animation: `fade-in-up 0.3s ease-out ${delay}s both` }}
     >
-      <div className="rounded-lg border border-border bg-background p-3">
+      <div className="border border-border bg-background p-3">
         {EXEC_TOOLS.map((tool, i) => (
           <div
             key={i}
@@ -140,7 +140,7 @@ export function ChatMockup() {
       className="w-full max-w-full px-2 sm:max-w-md sm:px-0 lg:max-w-lg"
       style={{ animation: "fade-in-right 0.7s ease-out 0.5s both" }}
     >
-      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+      <div className="overflow-hidden border-2 border-border bg-card">
         <div className="border-b border-border px-4 py-3">
           <EthioClawBrand size="sm" />
         </div>
@@ -148,7 +148,7 @@ export function ChatMockup() {
         <div className="flex flex-col gap-2.5 p-4">
           {/* User message */}
           <div className="flex justify-end">
-            <div className="max-w-[80%] rounded-xl rounded-tr-sm bg-muted px-3.5 py-2.5">
+            <div className="max-w-[80%] border border-border bg-muted px-3.5 py-2.5">
               <p className="text-sm text-foreground">
                 plz handle my customer complaints and log in notion
               </p>
