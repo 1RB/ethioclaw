@@ -35,7 +35,9 @@
     "preview": "next build && next start",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "swap": "npx tsx scripts/swap-asset.ts"
+    "swap": "npx tsx scripts/swap-asset.ts",
+    "key:roll": "npx tsx scripts/roll-fireworks-key.ts",
+    "key:test": "npx tsx scripts/roll-fireworks-key.ts --test"
   },
   "dependencies": {
     "@ai-sdk/fireworks": "^2.0.52",
