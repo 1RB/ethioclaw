@@ -1,87 +1,140 @@
+import { ArrowRight, CircleCheck, CircleX, AlertTriangle } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { AnimateOnView } from "~/components/core/animate-on-view";
 
-type Indicator = "yes" | "no" | "warn";
+type Indicator = "check" | "warn" | "x";
 
 interface ComparisonRow {
   category: string;
-  ethioclaw: Indicator;
-  vanilla: Indicator;
+  ethioclaw: string;
+  vanilla: string;
+  vanillaIndicator: Indicator;
 }
 
 const ROWS: ComparisonRow[] = [
-  { category: "Setup", ethioclaw: "yes", vanilla: "no" },
-  { category: "OAuth-only auth", ethioclaw: "yes", vanilla: "no" },
-  { category: "Sandboxed execution", ethioclaw: "yes", vanilla: "no" },
-  { category: "Managed tool surface", ethioclaw: "yes", vanilla: "warn" },
-  { category: "Audit trails", ethioclaw: "yes", vanilla: "no" },
-  { category: "One-click revocation", ethioclaw: "yes", vanilla: "warn" },
-  { category: "Telegram integration", ethioclaw: "yes", vanilla: "warn" },
+  {
+    category: "Setup",
+    ethioclaw: "Seconds",
+    vanilla: "30-60 min (Node, Tailscale, tunnels)",
+    vanillaIndicator: "warn",
+  },
+  {
+    category: "Credentials",
+    ethioclaw: "Encrypted, managed by Composio",
+    vanilla: "Plaintext in local config",
+    vanillaIndicator: "warn",
+  },
+  {
+    category: "Code Execution",
+    ethioclaw: "Remote sandbox",
+    vanilla: "On your local machine",
+    vanillaIndicator: "warn",
+  },
+  {
+    category: "Integrations",
+    ethioclaw: "500+ with managed OAuth",
+    vanilla: "Manual API key setup per app",
+    vanillaIndicator: "warn",
+  },
+  {
+    category: "Skill Security",
+    ethioclaw: "Managed tool surface",
+    vanilla: "Unvetted public registry",
+    vanillaIndicator: "x",
+  },
+  {
+    category: "Audit Trails",
+    ethioclaw: "Full action log",
+    vanilla: "None",
+    vanillaIndicator: "x",
+  },
+  {
+    category: "Revocation",
+    ethioclaw: "One click",
+    vanilla: "Find and delete config files",
+    vanillaIndicator: "warn",
+  },
 ];
 
-function Indicator({ type }: { type: Indicator }) {
-  if (type === "yes") {
-    return <span className="text-primary font-bold">YES</span>;
+function IndicatorIcon({ type }: { type: Indicator }) {
+  switch (type) {
+    case "check":
+      return <CircleCheck className="h-5 w-5 shrink-0 text-primary" />;
+    case "warn":
+      return <AlertTriangle className="h-5 w-5 shrink-0 text-muted-foreground" />;
+    case "x":
+      return <CircleX className="h-5 w-5 shrink-0 text-destructive" />;
   }
-  if (type === "no") {
-    return <span className="text-destructive font-bold">NO</span>;
-  }
-  return <span className="text-muted-foreground font-bold">PARTIAL</span>;
 }
 
 export function ComparisonSection() {
   return (
-    <section className="border-b-2 border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl">
-        <AnimateOnView className="mb-10 md:mb-16">
-          <p className="text-muted-foreground mb-4 text-xs font-bold uppercase tracking-[0.2em]">
-            COMPARISON MATRIX
-          </p>
-          <h2 className="text-foreground text-3xl font-bold leading-none tracking-tight md:text-5xl lg:text-6xl">
-            VS. SELF-HOSTED
-          </h2>
+    <section className="px-4 py-16 md:px-6 md:py-24 lg:py-32">
+      <div className="mx-auto max-w-4xl">
+        <AnimateOnView
+          as="h2"
+          className="mb-10 text-center text-2xl font-bold tracking-tight text-foreground md:mb-16 md:text-3xl lg:text-4xl"
+        >
+          Why is EthioClaw better?
         </AnimateOnView>
 
-        <AnimateOnView delay={0.1} margin="-50px">
-          <div className="overflow-x-auto">
-            <div className="min-w-[320px] border border-border">
-              <div className="grid grid-cols-[1fr_100px_100px] border-b border-border bg-muted/50">
-                <div className="p-3 text-xs font-bold uppercase tracking-wider md:p-4"></div>
-                <div className="flex items-center justify-center border-l border-border p-3 text-xs font-bold uppercase tracking-wider text-primary md:p-4">
-                  ETHIOCLAW
-                </div>
-                <div className="flex items-center justify-center border-l border-border p-3 text-xs font-bold uppercase tracking-wider text-muted-foreground md:p-4">
-                  DIY
-                </div>
-              </div>
+        <AnimateOnView
+          className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0"
+          delay={0.1}
+          margin="-50px"
+        >
+          <table className="w-full min-w-[500px] border-collapse">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="py-4 pr-4 text-left" />
+                <th className="px-4 py-4 text-center text-sm font-semibold text-foreground md:text-base">
+                  EthioClaw
+                </th>
+                <th className="px-4 py-4 text-center text-sm font-semibold text-muted-foreground md:text-base">
+                  Vanilla OpenClaw
+                </th>
+              </tr>
+            </thead>
+            <tbody>
               {ROWS.map((row) => (
-                <div
-                  key={row.category}
-                  className="grid grid-cols-[1fr_100px_100px] border-b border-border last:border-b-0"
-                >
-                  <div className="p-3 text-sm font-bold uppercase tracking-tight md:p-4 md:text-base">
+                <tr key={row.category} className="border-b border-border">
+                  <td className="py-4 pr-4 text-sm font-medium text-foreground md:text-base">
                     {row.category}
-                  </div>
-                  <div className="flex items-center justify-center border-l border-border p-3 md:p-4">
-                    <Indicator type={row.ethioclaw} />
-                  </div>
-                  <div className="flex items-center justify-center border-l border-border p-3 md:p-4">
-                    <Indicator type={row.vanilla} />
-                  </div>
-                </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <IndicatorIcon type="check" />
+                      <span className="text-xs text-muted-foreground md:text-sm">
+                        {row.ethioclaw}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <IndicatorIcon type={row.vanillaIndicator} />
+                      <span className="text-xs text-muted-foreground md:text-sm">
+                        {row.vanilla}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
               ))}
-            </div>
-          </div>
+            </tbody>
+          </table>
         </AnimateOnView>
 
-        <AnimateOnView className="mt-10 flex justify-center md:mt-16" delay={0.2}>
+        <AnimateOnView
+          className="mt-10 flex justify-center md:mt-16"
+          delay={0.2}
+        >
           <Link href="/login">
             <Button
               size="lg"
-              className="h-12 w-full rounded-none border border-primary bg-primary px-8 text-base font-bold uppercase tracking-wider text-primary-foreground hover:bg-transparent hover:text-primary md:w-auto"
+              className="h-12 w-full px-8 text-base sm:w-auto"
             >
-              ENTER SYSTEM
+              Get Started
+              <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </AnimateOnView>

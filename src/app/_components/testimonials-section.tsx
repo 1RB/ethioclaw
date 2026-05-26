@@ -1,76 +1,119 @@
 import Image from "next/image";
+import { MessageCircle, Repeat2, Heart, BarChart2 } from "lucide-react";
 import { AnimateOnView } from "~/components/core/animate-on-view";
 
-interface Quote {
-  id: string;
-  body: string;
+interface Tweet {
+  displayName: string;
   handle: string;
-  image: string;
-  name: string;
+  avatar: string;
+  body: string;
+  replies: number;
+  retweets: number;
+  likes: number;
+  views: string;
+  timestamp: string;
 }
 
-const QUOTES: Quote[] = [
+const TWEETS: Tweet[] = [
   {
-    id: "01",
-    body: "Finally an AI agent that doesn't ask me to paste API keys into a text file. OAuth-only setup took 30 seconds and I was already scheduling calendar invites.",
+    displayName: "Sarah",
     handle: "@sarahfin",
-    image: "/images/testimonials/sarah.jpg",
-    name: "Sarah",
+    avatar: "/images/testimonials/sarah.jpg",
+    body: "the fact that some of you are giving OpenClaw your passwords and API keys in a plaintext file in 2026 is actually crazy to me",
+    replies: 14,
+    retweets: 87,
+    likes: 342,
+    views: "12.4K",
+    timestamp: "3:42 PM · Feb 8, 2026",
   },
   {
-    id: "02",
-    body: "Friend asked me to help him build an AI assistant. I said try EthioClaw. He messages me from Telegram 5 minutes later like \"wait that's it?\" Yes. That's it.",
+    displayName: "Palash Kala",
     handle: "@kalapolish",
-    image: "/images/testimonials/palash.jpg",
-    name: "Palash",
+    avatar: "/images/testimonials/palash.jpg",
+    body: "A friend asked me to help him set up OpenClaw over the weekend. 2 hours of Docker, port forwarding, .env files. I said bro just try EthioClaw. He messages me from Telegram 5 minutes later like \"wait that's it?\" Yes. That's it :)",
+    replies: 7,
+    retweets: 28,
+    likes: 189,
+    views: "3.2K",
+    timestamp: "9:15 AM · Feb 10, 2026",
   },
   {
-    id: "03",
-    body: "The sandboxed execution is what sold me. I can let the agent read my email and update GitHub issues without worrying about it accidentally running rm -rf on my laptop.",
+    displayName: "Soham",
     handle: "@GanatraSoham",
-    image: "/images/testimonials/soham.jpg",
-    name: "Soham",
+    avatar: "/images/testimonials/soham.jpg",
+    body: "1800 exposed OpenClaw instances leaking API keys this week and people are still handing it their credentials in plaintext. absolute state of AI security in 2026",
+    replies: 34,
+    retweets: 93,
+    likes: 412,
+    views: "11.3K",
+    timestamp: "11:30 AM · Feb 11, 2026",
   },
   {
-    id: "04",
-    body: "Woke up to find my agent had triaged 23 GitHub issues, replied to 5 emails, and scheduled my meetings — all while I was asleep. 24/7 automation that actually works.",
+    displayName: "Karan Vaidya",
     handle: "@KaranVaidya6",
-    image: "/images/testimonials/karan.jpg",
-    name: "Karan",
+    avatar: "/images/testimonials/karan.jpg",
+    body: "EthioClaw >>> OpenClaw for anyone who doesn't want to mass expose their credentials. OAuth only, sandboxed execution, works straight from Telegram. Genuinely don't know why anyone is still self-hosting an AI agent with root access in 2026",
+    replies: 31,
+    retweets: 156,
+    likes: 847,
+    views: "38.2K",
+    timestamp: "2:08 PM · Feb 12, 2026",
   },
 ];
 
-function QuoteCard({ quote, index }: { quote: Quote; index: number }) {
+function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
   return (
     <AnimateOnView
-      className="bg-background p-6 md:p-8"
+      className="rounded-xl border border-border bg-card p-4"
       delay={index * 0.1}
       margin="-60px"
     >
-      <span className="text-primary text-xs font-bold uppercase tracking-wider">
-        {quote.id}
-      </span>
-      <p className="mt-4 text-sm leading-relaxed text-foreground">
-        &ldquo;{quote.body}&rdquo;
+      {/* Header row */}
+      <div className="flex items-center gap-2.5">
+        <Image
+          src={tweet.avatar}
+          alt={tweet.displayName}
+          width={40}
+          height={40}
+          loading="lazy"
+          className="h-10 w-10 rounded-full object-cover"
+        />
+        <div>
+          <div className="text-sm font-bold text-foreground">
+            {tweet.displayName}
+          </div>
+          <div className="text-sm text-muted-foreground">{tweet.handle}</div>
+        </div>
+      </div>
+
+      {/* Body */}
+      <p className="mt-3 text-sm leading-relaxed text-foreground">
+        {tweet.body}
       </p>
-      <div className="mt-6 flex items-center gap-3">
-        <div className="relative h-12 w-12 shrink-0 overflow-hidden border border-border">
-          <Image
-            src={quote.image}
-            alt={quote.name}
-            fill
-            className="object-cover"
-            sizes="48px"
-          />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-            {quote.name}
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            {quote.handle}
-          </span>
-        </div>
+
+      {/* Engagement row */}
+      <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground/60">
+        <span className="flex items-center gap-1">
+          <MessageCircle className="h-3.5 w-3.5" />
+          {tweet.replies}
+        </span>
+        <span className="flex items-center gap-1">
+          <Repeat2 className="h-3.5 w-3.5" />
+          {tweet.retweets}
+        </span>
+        <span className="flex items-center gap-1">
+          <Heart className="h-3.5 w-3.5" />
+          {tweet.likes}
+        </span>
+        <span className="flex items-center gap-1">
+          <BarChart2 className="h-3.5 w-3.5" />
+          {tweet.views}
+        </span>
+      </div>
+
+      {/* Timestamp */}
+      <div className="mt-2 text-xs text-muted-foreground">
+        {tweet.timestamp}
       </div>
     </AnimateOnView>
   );
@@ -78,20 +121,17 @@ function QuoteCard({ quote, index }: { quote: Quote; index: number }) {
 
 export function TestimonialsSection() {
   return (
-    <section className="border-b-2 border-border px-4 py-16 md:px-8 md:py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl">
-        <AnimateOnView className="mb-10 md:mb-16">
-          <p className="text-muted-foreground mb-4 text-xs font-bold uppercase tracking-[0.2em]">
-            FIELD REPORTS
-          </p>
-          <h2 className="text-foreground text-3xl font-bold leading-none tracking-tight md:text-5xl lg:text-6xl">
-            USER TESTIMONIALS
+    <section className="relative overflow-hidden border-t border-border px-4 py-16 md:px-6 md:py-24 lg:py-32">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-10 text-center md:mb-16">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl">
+            No seriously, stop giving OpenClaw your passwords.
           </h2>
-        </AnimateOnView>
+        </div>
 
-        <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2">
-          {QUOTES.map((quote, index) => (
-            <QuoteCard key={quote.id} quote={quote} index={index} />
+        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {TWEETS.map((tweet, index) => (
+            <TweetCard key={tweet.handle} tweet={tweet} index={index} />
           ))}
         </div>
       </div>
