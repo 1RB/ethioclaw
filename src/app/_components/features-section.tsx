@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { AnimateOnView } from "~/components/core/animate-on-view";
+import { QUARTER_CIRCLE } from "~/lib/landing-assets";
 
 interface Feature {
   icon: LucideIcon;
@@ -207,7 +208,7 @@ export function FeaturesSection() {
   return (
     <section className="relative border-b border-border px-4 py-16 md:px-6 md:py-24 lg:py-32">
       <Image
-        src="/images/elements/quarter_circle.svg"
+        src={QUARTER_CIRCLE}
         alt=""
         aria-hidden
         width={800}

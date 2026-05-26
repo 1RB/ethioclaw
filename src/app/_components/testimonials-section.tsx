@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { MessageCircle, Repeat2, Heart, BarChart2 } from "lucide-react";
 import { AnimateOnView } from "~/components/core/animate-on-view";
+import { TESTIMONIAL_AVATARS } from "~/lib/landing-assets";
 
 interface Tweet {
   displayName: string;
@@ -18,7 +19,7 @@ const TWEETS: Tweet[] = [
   {
     displayName: "Sarah",
     handle: "@sarahfin",
-    avatar: "/images/testimonials/sarah.jpg",
+    avatar: TESTIMONIAL_AVATARS.sarah,
     body: "the fact that some of you are giving OpenClaw your passwords and API keys in a plaintext file in 2026 is actually crazy to me",
     replies: 14,
     retweets: 87,
@@ -29,7 +30,7 @@ const TWEETS: Tweet[] = [
   {
     displayName: "Palash Kala",
     handle: "@kalapolish",
-    avatar: "/images/testimonials/palash.jpg",
+    avatar: TESTIMONIAL_AVATARS.palash,
     body: "A friend asked me to help him set up OpenClaw over the weekend. 2 hours of Docker, port forwarding, .env files. I said bro just try EthioClaw. He messages me from Telegram 5 minutes later like \"wait that's it?\" Yes. That's it :)",
     replies: 7,
     retweets: 28,
@@ -40,7 +41,7 @@ const TWEETS: Tweet[] = [
   {
     displayName: "Soham",
     handle: "@GanatraSoham",
-    avatar: "/images/testimonials/soham.jpg",
+    avatar: TESTIMONIAL_AVATARS.soham,
     body: "1800 exposed OpenClaw instances leaking API keys this week and people are still handing it their credentials in plaintext. absolute state of AI security in 2026",
     replies: 34,
     retweets: 93,
@@ -51,7 +52,7 @@ const TWEETS: Tweet[] = [
   {
     displayName: "Karan Vaidya",
     handle: "@KaranVaidya6",
-    avatar: "/images/testimonials/karan.jpg",
+    avatar: TESTIMONIAL_AVATARS.karan,
     body: "EthioClaw >>> OpenClaw for anyone who doesn't want to mass expose their credentials. OAuth only, sandboxed execution, works straight from Telegram. Genuinely don't know why anyone is still self-hosting an AI agent with root access in 2026",
     replies: 31,
     retweets: 156,

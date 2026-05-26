@@ -3,13 +3,14 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { AnimateOnView } from "~/components/core/animate-on-view";
+import { CUBE } from "~/lib/landing-assets";
 
 export function BottomCtaSection() {
   return (
     <section className="relative overflow-hidden border-t border-border px-4 py-16 md:px-6 md:py-24 lg:py-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.488_0.243_264.376/0.08),transparent_70%)]" />
       <Image
-        src="/images/elements/cube.svg"
+        src={CUBE}
         alt=""
         aria-hidden
         width={151}

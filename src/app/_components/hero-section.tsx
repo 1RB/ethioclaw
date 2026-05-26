@@ -3,36 +3,11 @@ import { ArrowRight, Zap } from "lucide-react";
 import Link from "next/link";
 import { AnimateOnView } from "~/components/core/animate-on-view";
 import { ChatMockup } from "./chat-mockup";
-
-const TOOL_LOGOS = [
-  "gmail",
-  "github",
-  "jira",
-  "notion",
-  "googlecalendar",
-  "linear",
-  "figma",
-  "asana",
-  "trello",
-  "googledrive",
-  "discord",
-  "dropbox",
-] as const;
-
-const SCATTERED_LOGOS = [
-  { slug: "gmail", top: "5%", left: "55%" },
-  { slug: "github", top: "18%", left: "85%" },
-  { slug: "jira", top: "65%", left: "58%" },
-  { slug: "notion", top: "75%", left: "82%" },
-  { slug: "googlecalendar", top: "35%", left: "92%" },
-  { slug: "linear", top: "85%", left: "70%" },
-  { slug: "figma", top: "10%", left: "72%" },
-  { slug: "asana", top: "48%", left: "55%" },
-  { slug: "trello", top: "8%", left: "95%" },
-  { slug: "googledrive", top: "70%", left: "95%" },
-  { slug: "discord", top: "40%", left: "65%" },
-  { slug: "dropbox", top: "25%", left: "62%" },
-] as const;
+import {
+  RAYS_LEFT,
+  SCATTERED_LOGOS,
+  TOOL_LOGOS,
+} from "~/lib/landing-assets";
 
 const SCATTER_TIMING = [
   { delay: 0, duration: 6 },
@@ -53,7 +28,7 @@ export function HeroSection() {
   return (
     <section className="relative overflow-hidden border-b border-border px-4 py-20 md:px-6 md:py-32 lg:py-40">
       <Image
-        src="/images/elements/rays_left.svg"
+        src={RAYS_LEFT}
         alt=""
         aria-hidden
         width={1920}
@@ -87,7 +62,8 @@ export function HeroSection() {
             />
           </div>
         );
-      })}
+      })
+      }
 
       <div className="pointer-events-none absolute inset-0 hidden lg:block lg:z-[5] lg:bg-[radial-gradient(ellipse_120%_140%_at_0%_50%,_var(--background)_40%,_transparent_100%)]" />
 
