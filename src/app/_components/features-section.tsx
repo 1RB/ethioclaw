@@ -140,7 +140,7 @@ function IntegrationsFeatureCard({ index }: { index: number }) {
                 alt={tool.name}
                 width={20}
                 height={20}
-                className="h-5 w-5"
+                className={`h-5 w-5 ${["github", "notion", "linear"].includes(tool.slug) ? "dark:invert" : ""}`}
               />
             </div>
           ))}
@@ -183,7 +183,7 @@ function MessagingFeatureCard({ index }: { index: number }) {
                 alt={platform.name}
                 width={14}
                 height={14}
-                className="h-3.5 w-3.5"
+                className={`h-3.5 w-3.5 ${platform.slug === "linear" ? "dark:invert" : ""}`}
               />
               {platform.name}
               {platform.disabled && (
@@ -201,7 +201,7 @@ function MessagingFeatureCard({ index }: { index: number }) {
 
 export function FeaturesSection() {
   return (
-    <section className="relative border-b-2 border-border px-4 py-20 md:px-6 md:py-28 lg:py-36">
+    <section className="relative border-b-2 border-border px-6 py-20 sm:px-8 sm:py-28 md:px-10 md:py-36 lg:py-44">
       <div className="relative z-10 mx-auto max-w-6xl">
         <AnimateOnView className="mb-12 md:mb-20">
           <p className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">

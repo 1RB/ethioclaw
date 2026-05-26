@@ -101,7 +101,7 @@ function ComparisonCard({ row, index }: { row: ComparisonRow; index: number }) {
 
 export function ComparisonSection() {
   return (
-    <section className="px-4 py-20 md:px-6 md:py-28 lg:py-36">
+    <section className="px-6 py-20 md:px-8 md:py-28 lg:py-36">
       <div className="mx-auto max-w-4xl">
         <AnimateOnView
           as="h2"

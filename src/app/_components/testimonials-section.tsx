@@ -122,7 +122,7 @@ function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
 
 export function TestimonialsSection() {
   return (
-    <section className="relative overflow-hidden border-t-2 border-border px-4 py-20 md:px-6 md:py-28 lg:py-36">
+    <section className="relative overflow-hidden border-t-2 border-border px-6 py-20 md:px-8 md:py-28 lg:py-36">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center md:mb-20">
           <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">

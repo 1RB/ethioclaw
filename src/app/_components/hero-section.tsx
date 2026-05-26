@@ -7,15 +7,15 @@ import { TOOL_LOGOS } from "~/lib/landing-assets";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-border px-4 py-20 sm:py-28 md:px-6 md:py-36 lg:py-44">
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-12 lg:flex-row lg:items-center lg:gap-20">
+    <section className="relative overflow-hidden border-b-2 border-border px-6 py-24 sm:px-8 sm:py-32 md:px-10 md:py-40 lg:py-48">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-10 sm:gap-14 lg:flex-row lg:items-center lg:gap-20">
         <AnimateOnView
-          className="flex flex-1 flex-col items-center gap-6 text-center lg:items-start lg:text-left"
+          className="flex flex-1 flex-col items-center gap-5 text-center lg:items-start lg:text-left"
           duration={0.6}
         >
           <AnimateOnView
             as="h1"
-            className="font-serif-display text-4xl font-medium leading-[1.02] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+            className="font-serif-display text-[2rem] font-medium leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
             delay={0.1}
           >
             Your AI that does things while you sleep.{" "}
@@ -23,7 +23,7 @@ export function HeroSection() {
           </AnimateOnView>
 
           <AnimateOnView
-            className="flex w-full items-center justify-center overflow-x-auto py-1 lg:hidden"
+            className="flex w-full items-center justify-center overflow-x-auto py-2 lg:hidden"
             animation="fade-in"
             delay={0.15}
           >
@@ -39,6 +39,7 @@ export function HeroSection() {
                     aria-hidden
                     width={24}
                     height={24}
+                    className="dark:invert"
                     style={{ width: "100%", height: "100%" }}
                   />
                 </div>

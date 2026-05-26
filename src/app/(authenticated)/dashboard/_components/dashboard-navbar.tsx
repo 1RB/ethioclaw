@@ -38,17 +38,17 @@ export function DashboardNavbar() {
   };
 
   return (
-    <header className="border-border bg-background/95 flex h-14 shrink-0 items-center justify-between border-b px-4 backdrop-blur">
+    <header className="border-border bg-background/95 flex h-14 shrink-0 items-center justify-between border-b px-3 backdrop-blur">
       <EthioClawBrand size="sm" logoLink="/dashboard" />
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5">
         <Tooltip>
           <TooltipTrigger asChild>
             <Link href="/dashboard">
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-9 w-9 ${isChat ? "bg-accent" : ""}`}
+                className={`h-10 w-10 ${isChat ? "bg-accent" : ""}`}
               >
                 <MessageCircle className="h-4 w-4" />
               </Button>
@@ -63,7 +63,7 @@ export function DashboardNavbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-9 w-9 ${isToolkits ? "bg-accent" : ""}`}
+                className={`h-10 w-10 ${isToolkits ? "bg-accent" : ""}`}
               >
                 <Puzzle className="h-4 w-4" />
               </Button>
@@ -78,7 +78,7 @@ export function DashboardNavbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-9 w-9 ${isSettings ? "bg-accent" : ""}`}
+                className={`h-10 w-10 ${isSettings ? "bg-accent" : ""}`}
               >
                 <Settings className="h-4 w-4" />
               </Button>
@@ -93,7 +93,7 @@ export function DashboardNavbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={`hidden h-9 w-9 md:inline-flex ${terminalOpen ? "bg-accent" : ""}`}
+                className={`hidden h-10 w-10 md:inline-flex ${terminalOpen ? "bg-accent" : ""}`}
                 onClick={handleToggleTerminal}
               >
                 <PanelRight className="h-4 w-4" />
@@ -117,7 +117,7 @@ export function DashboardNavbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9"
+              className="h-10 w-10"
               onClick={() => handleLogout()}
             >
               <LogOut className="h-4 w-4" />

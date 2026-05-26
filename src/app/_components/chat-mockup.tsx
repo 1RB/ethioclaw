@@ -121,7 +121,7 @@ function ExecResult({ delay }: { delay: number }) {
               alt={tool.icon}
               width={14}
               height={14}
-              className="shrink-0"
+              className={`shrink-0 ${tool.icon === "notion" ? "dark:invert" : ""}`}
             />
             <span className="min-w-0 truncate font-semibold text-foreground/90">
               {tool.slug}
@@ -137,7 +137,7 @@ function ExecResult({ delay }: { delay: number }) {
 export function ChatMockup() {
   return (
     <div
-      className="w-full max-w-full px-2 sm:max-w-md sm:px-0 lg:max-w-lg"
+      className="w-full max-w-full px-3 sm:max-w-md sm:px-0 lg:max-w-lg"
       style={{ animation: "fade-in-right 0.7s ease-out 0.5s both" }}
     >
       <div className="overflow-hidden border-2 border-border bg-card">

@@ -63,7 +63,7 @@ export function ChatInput({ onSend, onStop, status }: ChatInputProps) {
           disabled={isStreaming}
           rows={1}
           className={cn(
-            "border-border bg-muted/50 max-h-[200px] min-h-[44px] resize-none rounded-xl text-base md:text-sm",
+            "border-border bg-muted/50 max-h-[200px] min-h-[44px] resize-none text-base md:text-sm",
             "placeholder:text-muted-foreground/50",
             "focus-visible:ring-ring focus-visible:ring-1",
           )}
@@ -73,7 +73,7 @@ export function ChatInput({ onSend, onStop, status }: ChatInputProps) {
           <Button
             variant="default"
             size="icon"
-            className="size-10 shrink-0 rounded-xl"
+            className="size-10 shrink-0"
             onClick={handleStop}
           >
             <Square className="size-4 fill-current" />
@@ -83,7 +83,7 @@ export function ChatInput({ onSend, onStop, status }: ChatInputProps) {
             variant="default"
             size="icon"
             className={cn(
-              "size-10 shrink-0 rounded-xl",
+              "size-10 shrink-0",
               !canSend && "opacity-50",
             )}
             onClick={handleSubmit}

@@ -120,7 +120,7 @@ export function ChatView({
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="relative min-h-0 flex-1">
           {isEmpty ? (
-            <div className="flex h-full flex-col items-center justify-center gap-4">
+            <div className="flex h-full flex-col items-center justify-center gap-4 px-4">
               <div className="flex flex-wrap justify-center gap-2">
                 {SAMPLE_PROMPTS.map((prompt) => (
                   <button
@@ -128,7 +128,7 @@ export function ChatView({
                     onClick={() => {
                       void handleSend(prompt);
                     }}
-                    className="border-border text-muted-foreground hover:bg-accent hover:text-foreground rounded-full border px-4 py-2 text-sm transition-colors"
+                    className="border-border text-muted-foreground hover:bg-accent hover:text-foreground border px-4 py-2 text-sm transition-colors"
                   >
                     {prompt}
                   </button>
@@ -204,7 +204,7 @@ export function ChatView({
               variant="outline"
               size="icon"
               onClick={handleScrollToBottom}
-              className="absolute bottom-4 left-1/2 size-10 -translate-x-1/2 rounded-full shadow-md"
+              className="absolute bottom-4 left-1/2 size-10 -translate-x-1/2 shadow-md"
             >
               <ArrowDown className="size-4" />
             </Button>

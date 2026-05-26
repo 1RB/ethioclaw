@@ -22,7 +22,7 @@ export function LandingPage() {
         <TestimonialsSection />
         <BottomCtaSection />
       </main>
-      <footer className="border-t-2 border-border px-4 py-6 md:px-8 md:py-8">
+      <footer className="border-t-2 border-border px-6 py-6 md:px-8 md:py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <EthioClawBrand size="sm" />
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
