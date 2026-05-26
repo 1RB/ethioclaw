@@ -7,13 +7,14 @@ interface ServiceStatus {
   status: "ok" | "degraded" | "error" | "unknown";
   latencyMs: number;
   message?: string;
+  detail?: Record<string, unknown>;
 }
 
 interface StatusData {
   overall: string;
   timestamp: string;
   region: string;
-  version?: string;
+  version: string;
   services: {
     fireworks: ServiceStatus;
     database: ServiceStatus;
@@ -31,10 +32,7 @@ interface HistoryEntry {
 /*  CONFIG                                                            */
 /* ------------------------------------------------------------------ */
 
-const SERVICE_META: Record<
-  string,
-  { label: string; description: string }
-> = {
+const SERVICE_META: Record<string, { label: string; description: string }> = {
   fireworks: {
     label: "FIREWORKS AI",
     description: "LLM inference API",
@@ -126,215 +124,6 @@ function statusLabel(status: string): string {
 }
 
 /* ------------------------------------------------------------------ */
-/*  COMPONENTS                                                        */
-/* ------------------------------------------------------------------ */
-
-function StatusIndicator({ status }: { status: string }) {
-  const color = statusColor(status);
-  return (
-    <div className="flex items-center gap-2">
-      <div
-        className="h-2 w-2"
-        style={{ backgroundColor: color }}
-      />
-      <span
-        className="text-xs font-bold tracking-wider"
-        style={{ color }}
-      >
-        {statusLabel(status)}
-      </span>
-    </div>
-  );
-}
-
-function LatencyBlock({ ms }: { ms: number }) {
-  return (
-    <span className="font-mono text-xs tabular-nums" style={{ color: "#737373" }}>
-      {ms}ms
-    </span>
-  );
-}
-
-function HistoryBars({ history, key: name }: { history: HistoryEntry[]; key: string }) {
-  const entries = history.slice(-40);
-  const padding = 40 - entries.length;
-  return (
-    <div className="flex items-end gap-[1px]" style={{ height: 20 }}>
-      {Array.from({ length: padding }).map((_, i) => (
-        <div key={`pad-${i}`} className="w-[3px]" style={{ height: 4, backgroundColor: "#1a1a1a" }} />
-      ))}
-      {entries.map((h, i) => {
-        const s = h.services[name]?.status ?? "unknown";
-        const h2 = s === "ok" ? 16 : s === "degraded" ? 10 : 6;
-        const bg = statusColor(s);
-        return (
-          <div
-            key={i}
-            className="w-[3px]"
-            style={{ height: h2, backgroundColor: bg, opacity: 0.7 }}
-            title={`${fmtTime(new Date(h.timestamp))} — ${statusLabel(s)}`}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-function ServiceRow({
-  name,
-  svc,
-  history,
-}: {
-  name: string;
-  svc: ServiceStatus;
-  history: HistoryEntry[];
-}) {
-  const meta = SERVICE_META[name];
-  const pct = uptimePct(history, name);
-
-  return (
-    <div className="grid grid-cols-1 gap-4 border-b-2 border-[#0a0a0a] py-4 sm:grid-cols-[1fr_140px_100px_120px] sm:items-center sm:gap-6">
-      {/* Name + Description */}
-      <div>
-        <div className="text-sm font-bold tracking-tight uppercase" style={{ color: "#fafafa" }}>
-          {meta?.label ?? name}
-        </div>
-        <div className="mt-0.5 text-xs uppercase tracking-wider" style={{ color: "#737373" }}>
-          {meta?.description ?? ""}
-        </div>
-        {svc.message && (
-          <div className="mt-1 truncate font-mono text-[10px]" style={{ color: "#737373" }}>
-            {svc.message}
-          </div>
-        )}
-      </div>
-
-      {/* Status */}
-      <div className="sm:text-left">
-        <StatusIndicator status={svc.status} />
-      </div>
-
-      {/* Latency */}
-      <div className="sm:text-right">
-        <LatencyBlock ms={svc.latencyMs} />
-      </div>
-
-      {/* Uptime bars */}
-      <div className="flex flex-col gap-1 sm:items-end">
-        <span className="font-mono text-[10px] tabular-nums" style={{ color: "#737373" }}>
-          {pct}%
-        </span>
-        <HistoryBars history={history} key={name} />
-      </div>
-    </div>
-  );
-}
-
-function ResponseGrid({ history }: { history: HistoryEntry[] }) {
-  if (history.length < 2) return null;
-  return (
-    <div className="grid grid-cols-1 gap-0 border-2 border-[#0a0a0a] sm:grid-cols-3">
-      {["fireworks", "database", "telegram"].map((key) => {
-        const meta = SERVICE_META[key];
-        const recent = history.slice(-20).map((h) => h.services[key]?.latencyMs ?? 0);
-        const avg = Math.round(recent.reduce((a, b) => a + b, 0) / recent.length) || 0;
-        const max = Math.max(...recent, 1);
-        return (
-          <div
-            key={key}
-            className="border-b-2 border-[#0a0a0a] p-4 last:border-b-0 sm:border-b-0 sm:border-r-2 sm:last:border-r-0"
-          >
-            <div className="mb-2 flex items-baseline justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#fafafa" }}>
-                {meta?.label ?? key}
-              </span>
-              <span className="font-mono text-[10px]" style={{ color: "#737373" }}>
-                AVG {avg}ms
-              </span>
-            </div>
-            <div className="flex items-end gap-[1px]" style={{ height: 32 }}>
-              {recent.map((ms, i) => {
-                const h = Math.max(3, Math.min(32, (ms / max) * 32));
-                const aboveAvg = ms > avg * 1.5;
-                return (
-                  <div
-                    key={i}
-                    className="flex-1"
-                    style={{
-                      height: h,
-                      backgroundColor: aboveAvg ? "#ff6b00" : "#39ff14",
-                      opacity: 0.6,
-                    }}
-                    title={`${ms}ms`}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function IncidentList({ history }: { history: HistoryEntry[] }) {
-  const incidents = history.filter((h) => h.overall !== "ok").reverse();
-  if (incidents.length === 0) {
-    return (
-      <div className="py-6 text-center">
-        <p className="text-sm font-bold uppercase tracking-wider" style={{ color: "#39ff14" }}>
-          NO INCIDENTS
-        </p>
-        <p className="mt-1 text-xs uppercase tracking-wider" style={{ color: "#737373" }}>
-          All services stable during monitoring window
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="flex flex-col">
-      {incidents.slice(0, 10).map((entry, i) => {
-        const bad = Object.entries(entry.services).filter(([, s]) => s.status !== "ok");
-        return (
-          <div
-            key={i}
-            className="border-b border-[#1a1a1a] py-3 last:border-b-0"
-          >
-            <div className="font-mono text-[10px]" style={{ color: "#737373" }}>
-              {new Date(entry.timestamp).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </div>
-            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs" style={{ color: "#fafafa" }}>
-              {bad.map(([name, svc]) => {
-                const meta = SERVICE_META[name];
-                return (
-                  <span key={name} className="flex items-center gap-1.5">
-                    <span
-                      className="inline-block h-1.5 w-1.5"
-                      style={{ backgroundColor: statusColor(svc.status) }}
-                    />
-                    {meta?.label ?? name}: {svc.message ?? statusLabel(svc.status)}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-      {incidents.length > 10 && (
-        <p className="py-2 text-center font-mono text-[10px]" style={{ color: "#737373" }}>
-          +{incidents.length - 10} MORE
-        </p>
-      )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /*  MAIN COMPONENT                                                    */
 /* ------------------------------------------------------------------ */
 
@@ -387,48 +176,42 @@ export function StatusClient() {
   }, []);
 
   const overallColor = statusColor(data?.overall ?? "unknown");
+  const metaEntries = Object.entries(data?.services ?? {});
 
   return (
-    <div className="flex flex-col gap-0">
-      {/* ── Top Bar ── */}
-      <div className="flex flex-col justify-between gap-4 border-b-2 border-[#0a0a0a] py-4 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-0 font-mono">
+      {/* ── Title + Controls ── */}
+      <div className="flex flex-col justify-between gap-4 border-b-2 border-border py-4 sm:flex-row sm:items-baseline">
         <div>
-          <h1 className="text-xl font-bold tracking-tight uppercase sm:text-2xl" style={{ color: "#fafafa" }}>
-            SYSTEM STATUS
+          <h1 className="text-xl font-bold uppercase tracking-tight text-foreground sm:text-2xl">
+            System Status
           </h1>
-          <p className="mt-0.5 text-xs uppercase tracking-wider" style={{ color: "#737373" }}>
+          <p className="mt-0.5 text-xs uppercase tracking-wider text-muted-foreground">
             Infrastructure health monitor
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
           {lastChecked && (
-            <div className="flex items-center gap-3 font-mono text-[10px]" style={{ color: "#737373" }}>
+            <>
               <span>NEXT: {nextRefresh}s</span>
               <span>{ago(Date.now() - lastChecked.getTime())} AGO</span>
-            </div>
+            </>
           )}
           <button
             onClick={() => void fetchStatus()}
             disabled={loading}
-            className="border-2 border-[#0a0a0a] px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors hover:bg-[#39ff14] hover:text-[#0a0a0a] disabled:opacity-50"
-            style={{ color: "#fafafa" }}
+            className="border-2 border-border px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-50"
           >
             {loading ? "..." : "REFRESH"}
           </button>
         </div>
       </div>
 
-      {/* ── Overall Banner ── */}
-      <div
-        className="border-b-2 border-[#0a0a0a] py-6 sm:py-8"
-        style={{ backgroundColor: "#0f0f0f" }}
-      >
+      {/* ── Overall ── */}
+      <div className="border-b-2 border-border py-6 sm:py-8">
         <div className="flex items-center gap-3">
-          <div
-            className="h-3 w-3"
-            style={{ backgroundColor: overallColor }}
-          />
+          <div className="h-3 w-3" style={{ backgroundColor: overallColor }} />
           <span
             className="text-lg font-bold uppercase tracking-tight sm:text-xl"
             style={{ color: overallColor }}
@@ -443,71 +226,218 @@ export function StatusClient() {
           </span>
         </div>
         {data && (
-          <p className="mt-1 font-mono text-[10px]" style={{ color: "#737373" }}>
-            {fmtTime(new Date(data.timestamp))} UTC · REGION {data.region.toUpperCase()}
-            {data.version && ` · ${data.version}`}
+          <p className="mt-2 text-[10px] text-muted-foreground">
+            {fmtTime(new Date(data.timestamp))} UTC · REGION {data.region.toUpperCase()} · {data.version.toUpperCase()}
           </p>
         )}
       </div>
 
-      {/* ── Error Banner ── */}
+      {/* ── Error ── */}
       {error && (
         <div className="border-b-2 border-[#ff0033] py-3" style={{ backgroundColor: "#1a0005" }}>
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider" style={{ color: "#ff0033" }}>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#ff0033]">
             ERROR: {error}
           </div>
         </div>
       )}
 
-      {/* ── Services Table ── */}
-      <div className="border-b-2 border-[#0a0a0a] py-4">
-        <div className="mb-2 flex items-baseline justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#737373" }}>
-            SERVICES
+      {/* ── Services ── */}
+      <div className="border-b-2 border-border py-4">
+        <div className="mb-3 flex items-baseline justify-between">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Services
           </span>
-          <span className="font-mono text-[10px]" style={{ color: "#737373" }}>
+          <span className="text-[10px] text-muted-foreground">
             {history.length} CHECKS
           </span>
         </div>
 
         {!data && !error ? (
-          <div className="py-8 text-center font-mono text-xs" style={{ color: "#737373" }}>
+          <div className="py-8 text-center text-xs text-muted-foreground">
             LOADING...
           </div>
         ) : (
-          Object.entries(data?.services ?? {}).map(([key, svc]) => (
-            <ServiceRow key={key} name={key} svc={svc} history={history} />
-          ))
+          <div className="flex flex-col">
+            {/* Table Header */}
+            <div className="hidden grid-cols-[1fr_140px_100px_80px] gap-4 border-b border-border pb-2 text-[10px] uppercase tracking-wider text-muted-foreground sm:grid">
+              <span>Service</span>
+              <span>Status</span>
+              <span className="text-right">Latency</span>
+              <span className="text-right">Uptime</span>
+            </div>
+
+            {metaEntries.map(([key, svc]) => {
+              const meta = SERVICE_META[key];
+              const pct = uptimePct(history, key);
+              const color = statusColor(svc.status);
+
+              return (
+                <div
+                  key={key}
+                  className="grid grid-cols-1 gap-2 border-b border-border py-3 last:border-b-0 sm:grid-cols-[1fr_140px_100px_80px] sm:items-center sm:gap-4"
+                >
+                  {/* Service Name */}
+                  <div>
+                    <div className="text-sm font-bold uppercase tracking-tight text-foreground">
+                      {meta?.label ?? key}
+                    </div>
+                    <div className="mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {meta?.description ?? ""}
+                    </div>
+                    {svc.message && (
+                      <div className="mt-1 truncate text-[10px] text-muted-foreground">
+                        {svc.message}
+                      </div>
+                    )}
+                    {svc.detail && (
+                      <div className="mt-1 text-[10px] text-muted-foreground">
+                        {Object.entries(svc.detail)
+                          .map(([k, v]) => `${k}: ${String(v)}`)
+                          .join(" · ")}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Status */}
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2" style={{ backgroundColor: color }} />
+                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color }}>
+                      {statusLabel(svc.status)}
+                    </span>
+                  </div>
+
+                  {/* Latency */}
+                  <div className="text-right text-xs tabular-nums text-muted-foreground">
+                    {svc.latencyMs}ms
+                  </div>
+
+                  {/* Uptime */}
+                  <div className="text-right text-xs tabular-nums text-muted-foreground">
+                    {pct}%
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 
-      {/* ── Response Times ── */}
+      {/* ── Response Times (flat bar list) ── */}
       {history.length > 1 && (
-        <div className="border-b-2 border-[#0a0a0a] py-4">
-          <div className="mb-2 text-xs font-bold uppercase tracking-wider" style={{ color: "#737373" }}>
-            RESPONSE TIMES
+        <div className="border-b-2 border-border py-4">
+          <div className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Response Times
           </div>
-          <ResponseGrid history={history} />
+          <div className="grid grid-cols-1 gap-0 sm:grid-cols-3">
+            {["fireworks", "database", "telegram"].map((key) => {
+              const meta = SERVICE_META[key];
+              const recent = history.slice(-20).map((h) => h.services[key]?.latencyMs ?? 0);
+              const avg = Math.round(recent.reduce((a, b) => a + b, 0) / recent.length) || 0;
+              const max = Math.max(...recent, 1);
+              return (
+                <div
+                  key={key}
+                  className="border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r-2 sm:border-border sm:last:border-r-0"
+                >
+                  <div className="mb-2 flex items-baseline justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      {meta?.label ?? key}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      AVG {avg}ms
+                    </span>
+                  </div>
+                  <div className="flex items-end gap-[1px]" style={{ height: 32 }}>
+                    {recent.map((ms, i) => {
+                      const h = Math.max(3, Math.min(32, (ms / max) * 32));
+                      const aboveAvg = ms > avg * 1.5;
+                      return (
+                        <div
+                          key={i}
+                          className="flex-1"
+                          style={{
+                            height: h,
+                            backgroundColor: aboveAvg ? "#ff6b00" : "#39ff14",
+                            opacity: 0.5,
+                          }}
+                          title={`${ms}ms`}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* ── Past Incidents ── */}
-      <div className="border-b-2 border-[#0a0a0a] py-4">
-        <div className="mb-2 text-xs font-bold uppercase tracking-wider" style={{ color: "#737373" }}>
-          INCIDENT HISTORY
+      {/* ── Incidents ── */}
+      <div className="border-b-2 border-border py-4">
+        <div className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          Incident History
         </div>
-        <IncidentList history={history} />
+        {(() => {
+          const incidents = history.filter((h) => h.overall !== "ok").reverse();
+          if (incidents.length === 0) {
+            return (
+              <div className="py-4 text-xs text-muted-foreground">
+                <span className="text-primary">NO INCIDENTS</span> — All services stable during monitoring window
+              </div>
+            );
+          }
+          return (
+            <div className="flex flex-col">
+              {incidents.slice(0, 10).map((entry, i) => {
+                const bad = Object.entries(entry.services).filter(([, s]) => s.status !== "ok");
+                return (
+                  <div
+                    key={i}
+                    className="border-b border-border py-3 last:border-b-0"
+                  >
+                    <div className="text-[10px] text-muted-foreground">
+                      {new Date(entry.timestamp).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-foreground">
+                      {bad.map(([name, svc]) => {
+                        const meta = SERVICE_META[name];
+                        return (
+                          <span key={name} className="flex items-center gap-1.5">
+                            <span
+                              className="inline-block h-1.5 w-1.5"
+                              style={{ backgroundColor: statusColor(svc.status) }}
+                            />
+                            {meta?.label ?? name}: {svc.message ?? statusLabel(svc.status)}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              {incidents.length > 10 && (
+                <p className="py-2 text-center text-[10px] text-muted-foreground">
+                  +{incidents.length - 10} MORE
+                </p>
+              )}
+            </div>
+          );
+        })()}
       </div>
 
       {/* ── Footer ── */}
       <div className="flex flex-col items-center justify-between gap-2 py-4 sm:flex-row">
-        <span className="font-mono text-[10px]" style={{ color: "#737373" }}>
+        <span className="text-[10px] text-muted-foreground">
           AUTO-REFRESH 30s · {history.length} DATA POINTS
         </span>
         <Link
           href="/"
-          className="text-xs font-bold uppercase tracking-wider transition-colors hover:text-[#39ff14]"
-          style={{ color: "#737373" }}
+          className="text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-primary"
         >
           ← BACK TO ETHIOCLAW
         </Link>

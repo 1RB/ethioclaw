@@ -10,16 +10,16 @@ export const metadata: Metadata = {
 
 export default function StatusPage() {
   return (
-    <div className="flex min-h-screen flex-col" style={{ backgroundColor: "#0a0a0a", color: "#fafafa" }}>
+    <div className="bg-background flex min-h-screen flex-col">
       {/* Header */}
-      <header className="border-b-2 border-[#0a0a0a]" style={{ backgroundColor: "#0f0f0f" }}>
+      <header className="border-b-2 border-border">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="transition-opacity hover:opacity-70">
             <EthioClawBrand size="md" />
           </Link>
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2" style={{ backgroundColor: "#39ff14" }} />
-            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#737373" }}>
+            <div className="h-2 w-2 bg-primary" />
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               STATUS
             </span>
           </div>
@@ -34,12 +34,12 @@ export default function StatusPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t-2 border-[#0a0a0a]" style={{ backgroundColor: "#0f0f0f" }}>
+      <footer className="border-t-2 border-border">
         <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4 sm:px-6">
-          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "#737373" }}>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             © 2026 ETHIOCLAW
           </span>
-          <span className="font-mono text-[10px]" style={{ color: "#737373" }}>
+          <span className="font-mono text-[10px] text-muted-foreground">
             VERCEL + NEON
           </span>
         </div>
