@@ -103,7 +103,17 @@ export function serializeMessages(messages: ReconstructedMessage[]): string {
 
   for (const msg of messages) {
     if (msg.role === "user") {
-      lines.push(`[User]: ${msg.content}`);
+      if (typeof msg.content === "string") {
+        lines.push(`[User]: ${msg.content}`);
+      } else {
+        const textParts = msg.content
+          .filter((part): part is { type: "text"; text: string } => part.type === "text")
+          .map((part) => part.text)
+          .join("\n");
+        const imageCount = msg.content.filter((part) => part.type === "image").length;
+        const imageNote = imageCount > 0 ? ` [${imageCount} image(s)]` : "";
+        lines.push(`[User]: ${textParts}${imageNote}`);
+      }
       continue;
     }
 
