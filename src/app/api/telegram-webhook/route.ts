@@ -213,7 +213,7 @@ async function handleRegularMessage(
           const stepText = stripToolResultEchoes(step.text).trim();
           if (stepText) {
             accumulatedText += stepText;
-            await sendTelegramMessage(chatId, stepText.slice(0, 4096));
+            await sendTelegramMessage(chatId, stepText.slice(0, 32768));
             await sendChatAction(chatId, "typing");
           }
         },
@@ -222,7 +222,7 @@ async function handleRegularMessage(
       // Send final text only if it wasn't already sent via onStepFinish
       const finalText = stripToolResultEchoes(result.text).trim();
       if (!accumulatedText && finalText) {
-        await sendTelegramMessage(chatId, finalText.slice(0, 4096));
+        await sendTelegramMessage(chatId, finalText.slice(0, 32768));
       } else if (!accumulatedText && !finalText) {
         await sendTelegramMessage(chatId, "I processed your request.");
       }

@@ -7,6 +7,7 @@ interface SystemPromptParams {
   relevantMemories?: string[];
   hasCompactionSummary?: boolean;
   userTimezone: string;
+  source?: "web" | "telegram" | "cron";
 }
 
 const DEFAULT_SOUL_PROMPT = `## Who You Are
@@ -157,13 +158,27 @@ Use the summary as a reminder of what was discussed and decided previously, but:
 const MESSAGING_GUIDELINES = `## Messaging Style
 
 - Be concise. Prefer short, clear responses over walls of text.
-- Use formatting (bold, lists, code blocks) when it helps readability.
+- Use formatting (bold, lists, code blocks, tables) when it helps readability.
 - Don't start messages with greetings or filler. Get to the point.
 - Match the user's energy - if they're brief, be brief. If they want detail, provide it.
 - When using tools, briefly explain what you're doing and why.
 - If a tool fails, explain what happened and suggest alternatives.
 - NEVER echo raw tool results, JSON, or HTML back to the user. Tool results are displayed separately in the UI. Instead, summarize what you found in natural language.
 - NEVER share internal IDs (cron job IDs, etc.) with the user - they're implementation details. Describe things by their content or purpose instead.`;
+
+const TELEGRAM_RICH_NOTE = `## Telegram Rich Messages
+
+When responding to Telegram or scheduled cron messages, your output is sent as a Telegram rich message (Bot API 10.1+). This means your response can use rich formatting that renders natively in Telegram:
+
+- Headers (#, ##, ###)
+- Tables
+- Nested lists and checklists (- [x])
+- Code blocks with syntax highlighting
+- Inline math ($...$) and display math ($$...$$)
+- Blockquotes
+- Collapsible details blocks (<details><summary>...</summary>...</details>)
+
+Use these formatting features when they help readability, especially for structured data, comparisons, step-by-step instructions, or summaries. Keep responses concise and scannable.`;
 
 export function buildSystemPrompt(params: SystemPromptParams): string {
   const sections: string[] = [];
@@ -188,6 +203,10 @@ export function buildSystemPrompt(params: SystemPromptParams): string {
   sections.push(CUSTOM_TOOLS_DESCRIPTION);
   sections.push(SCHEDULED_TASK_NOTE);
   sections.push(MESSAGING_GUIDELINES);
+
+  if (params.source === "telegram" || params.source === "cron") {
+    sections.push(TELEGRAM_RICH_NOTE);
+  }
 
   if (params.hasCompactionSummary) {
     sections.push(SESSION_CONTINUITY_NOTE);

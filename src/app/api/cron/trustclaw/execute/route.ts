@@ -90,8 +90,8 @@ async function executeJobs(
       const cleanedText = stripToolResultEchoes(result.text);
       if (cleanedText) {
         const truncated =
-          cleanedText.length > 4096
-            ? cleanedText.slice(0, 4093) + "..."
+          cleanedText.length > 32768
+            ? cleanedText.slice(0, 32765) + "..."
             : cleanedText;
         try {
           await sendTelegramMessage(telegramChatId, truncated);

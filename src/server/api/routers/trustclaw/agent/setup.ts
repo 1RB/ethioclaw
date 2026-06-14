@@ -60,6 +60,9 @@ function sanitizeToolResults(tools: ToolSet): ToolSet {
 interface PrepareAgentRunParams {
   instanceId: string;
   userMessage: string;
+  userContentParts?: Array<
+    { type: "text"; text: string } | { type: "image"; image: string } | { type: "audio"; audio: string }
+  >;
   source: MessageSource;
   userMessageType?: "hidden";
 }
@@ -74,7 +77,7 @@ type PrepareResult = { status: "ready"; result: PrepareAgentRunResult };
 export async function prepareAgentRun(
   params: PrepareAgentRunParams,
 ): Promise<PrepareResult> {
-  const { instanceId, userMessage, source, userMessageType } = params;
+  const { instanceId, userMessage, userContentParts, source, userMessageType } = params;
 
   const instance = await db.composioClawInstance.findUnique({
     where: { id: instanceId },
@@ -101,6 +104,7 @@ export async function prepareAgentRun(
       relevantMemories,
       hasCompactionSummary: !!instance.lastCompactionSummary,
       userTimezone,
+      source,
     }),
   );
 
@@ -112,6 +116,7 @@ export async function prepareAgentRun(
     dbMessages,
     instance.lastCompactionSummary,
     userMessage,
+    userContentParts,
   );
 
   const contextWindow = getContextWindow(instance.anthropicModel);
@@ -130,11 +135,15 @@ export async function prepareAgentRun(
     };
   }
 
+  const dbUserContent = userContentParts && userContentParts.length > 0
+    ? userContentParts
+    : [{ type: "text", text: userMessage }];
+
   await db.message.create({
     data: {
       instanceId,
       role: "user",
-      content: [{ type: "text", text: userMessage }],
+      content: dbUserContent,
       source,
       ...(userMessageType && { messageType: userMessageType }),
     },
