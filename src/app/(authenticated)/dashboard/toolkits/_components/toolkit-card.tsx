@@ -92,16 +92,28 @@ export function ToolkitCard({ toolkit }: ToolkitCardProps) {
             )}
           </div>
 
-          {/* Sharp logo */}
-          {/* eslint-disable-next-line @next/next/no-img-element -- external SVG from logos.composio.dev */}
-          <img
-            src={toolkit.logo}
-            alt={`${toolkit.name} logo`}
-            className="h-12 w-12 select-none transition-opacity duration-300 ease-in"
-            style={{ opacity: logoLoaded ? 1 : 0 }}
-            onLoad={() => setLogoLoaded(true)}
-            draggable={false}
-          />
+          {/* Sharp logo with fallback */}
+          <div className="relative h-12 w-12">
+            {/* eslint-disable-next-line @next/next/no-img-element -- external SVG from logos.composio.dev */}
+            <img
+              src={toolkit.logo}
+              alt={`${toolkit.name} logo`}
+              className="h-12 w-12 select-none transition-opacity duration-300 ease-in"
+              style={{ opacity: logoLoaded ? 1 : 0 }}
+              onLoad={() => setLogoLoaded(true)}
+              onError={() => setLogoLoaded(true)}
+              draggable={false}
+            />
+
+            {/* Fallback letter avatar when logo fails to load */}
+            {!logoLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-lg font-bold text-muted-foreground">
+                  {toolkit.name.charAt(0).toUpperCase()}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Name */}
           <h3 className="select-none text-sm font-semibold text-foreground">

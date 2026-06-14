@@ -5,6 +5,7 @@ import type {
   ReconstructedMessage,
   JsonValue,
   ToolResultOutput,
+  UserContentPart,
 } from "../types";
 import {
   shouldCompact,
@@ -46,6 +47,8 @@ function deepSanitize<T>(value: T): T {
 export const contentPartSchema = z.object({
   type: z.string(),
   text: z.string().optional(),
+  image: z.string().optional(),
+  audio: z.string().optional(),
 });
 
 export const contentSchema = z.array(contentPartSchema);
@@ -127,6 +130,9 @@ export function buildContext(
   dbMessages: Awaited<ReturnType<typeof loadContextMessages>>,
   lastCompactionSummary: string | null,
   userMessage: string,
+  userContentParts?: Array<
+    { type: "text"; text: string } | { type: "image"; image: string } | { type: "audio"; audio: string }
+  >,
 ): ReconstructedMessage[] {
   const aiMessages = deepSanitize(reconstructMessages(dbMessages));
 
@@ -139,7 +145,16 @@ export function buildContext(
     });
   }
 
-  aiMessages.push({ role: "user" as const, content: sanitizeString(userMessage) });
+  if (userContentParts && userContentParts.length > 0) {
+    const sanitizedParts = userContentParts.map((part) => {
+      if (part.type === "text") return { type: "text" as const, text: sanitizeString(part.text) };
+      if (part.type === "image") return { type: "image" as const, image: part.image };
+      return { type: "text" as const, text: "[Voice message]" };
+    });
+    aiMessages.push({ role: "user" as const, content: sanitizedParts as UserContentPart[] });
+  } else {
+    aiMessages.push({ role: "user" as const, content: sanitizeString(userMessage) });
+  }
 
   return aiMessages;
 }
@@ -174,7 +189,22 @@ export function reconstructMessages(
       .join("\n");
 
     if (role === "user") {
-      result.push({ role: "user", content: textContent || "(empty)" });
+      const parts = contentParts
+        .map((p) => {
+          if (p.type === "text" && p.text) return { type: "text" as const, text: p.text };
+          if (p.type === "image" && p.image) return { type: "image" as const, image: p.image };
+          if (p.type === "audio" && p.audio) return { type: "text" as const, text: "[Voice message]" };
+          return null;
+        })
+        .filter((p): p is NonNullable<typeof p> => p !== null);
+
+      if (parts.length === 1 && parts[0]!.type === "text") {
+        result.push({ role: "user", content: parts[0]!.text });
+      } else if (parts.length > 0) {
+        result.push({ role: "user", content: parts as UserContentPart[] });
+      } else {
+        result.push({ role: "user", content: textContent || "(empty)" });
+      }
       continue;
     }
 

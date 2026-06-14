@@ -33,11 +33,10 @@ async function checkFireworks(): Promise<ServiceStatus> {
     if (res.ok) {
       return { status: "ok", latencyMs };
     }
-    const body = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
     return {
       status: res.status === 412 ? "degraded" : "error",
       latencyMs,
-      message: body.error?.message ?? `HTTP ${res.status}`,
+      message: "Service unavailable",
     };
   } catch (e) {
     return {

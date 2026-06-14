@@ -103,20 +103,22 @@ export function ToolkitsClient() {
         Toolkits
       </h1>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <Tabs
-          value={filter}
-          onValueChange={(v) => {
-            if (v === "all" || v === "connected") setFilter(v);
-          }}
-        >
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="connected">Connected</TabsTrigger>
-          </TabsList>
-        </Tabs>
+      <div className="sticky top-0 z-30 -mx-4 bg-background/95 px-4 py-3 backdrop-blur-sm sm:mx-0 sm:rounded-lg sm:border sm:border-border/40 sm:bg-card sm:px-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Tabs
+            value={filter}
+            onValueChange={(v) => {
+              if (v === "all" || v === "connected") setFilter(v);
+            }}
+          >
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="connected">Connected</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <ToolkitSearch onSearch={setSearch} isLoading={isSearching} />
+          <ToolkitSearch onSearch={setSearch} isLoading={isSearching} />
+        </div>
       </div>
 
       {/* Shared SVG blur filter for glow effect */}
@@ -139,7 +141,7 @@ export function ToolkitsClient() {
           </div>
         ) : (
           <div
-            className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             onPointerMove={handlePointerMove}
           >
             {allItems.map((toolkit) => (

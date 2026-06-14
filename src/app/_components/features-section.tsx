@@ -67,6 +67,12 @@ const MESSAGING_PLATFORMS: {
   { name: "Slack", slug: "slack", disabled: true },
 ];
 
+const DARK_INVERT_LOGOS = new Set(["github", "linear", "notion"]);
+
+function logoInvertClass(slug: string): string {
+  return DARK_INVERT_LOGOS.has(slug) ? "dark:invert" : "";
+}
+
 function FeatureCard({
   feature,
   index,
@@ -76,16 +82,16 @@ function FeatureCard({
 }) {
   return (
     <AnimateOnView delay={index * 0.1}>
-      <div className="h-full border-2 border-border bg-card p-6">
-        <div className="flex h-10 w-10 items-center justify-center border border-border bg-muted">
-          <feature.icon className="h-5 w-5 text-foreground" />
+      <div className="bg-card border-border/40 h-full rounded-xl border p-6 transition-all duration-200 hover:border-primary/20 hover:shadow-sm hover:-translate-y-0.5">
+        <div className="bg-primary/10 flex h-9 w-9 items-center justify-center rounded-lg">
+          <feature.icon className="text-primary h-4 w-4" />
         </div>
         <div className="mt-4 flex flex-col gap-1.5">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+          <h3 className="text-foreground text-base font-semibold">
             {feature.title}
           </h3>
           {feature.description && (
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               {feature.description}
             </p>
           )}
@@ -116,36 +122,31 @@ const INTEGRATION_TOOLS: { slug: string; name: string }[] = [
 function IntegrationsFeatureCard({ index }: { index: number }) {
   return (
     <AnimateOnView delay={index * 0.1}>
-      <div className="h-full border-2 border-border bg-card p-6">
-        <div className="flex h-10 w-10 items-center justify-center border border-border bg-muted">
-          <Layers className="h-5 w-5 text-foreground" />
+      <div className="bg-card border-border/40 h-full rounded-xl border p-6 transition-all duration-200 hover:border-primary/20 hover:shadow-sm hover:-translate-y-0.5">
+        <div className="bg-primary/10 flex h-9 w-9 items-center justify-center rounded-lg">
+          <Layers className="text-primary h-4 w-4" />
         </div>
         <div className="mt-4 flex flex-col gap-1.5">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+          <h3 className="text-foreground text-base font-semibold">
             1000+ Integrations
           </h3>
-          <p className="text-sm leading-relaxed text-muted-foreground">
+          <p className="text-muted-foreground text-sm leading-relaxed">
             Connect to all of your favourite apps in a single click.
           </p>
         </div>
-        <div className="mt-4 grid grid-cols-4 gap-2 pt-1 sm:grid-cols-5">
+        <div className="mt-4 flex flex-wrap items-center gap-3 pt-1">
           {INTEGRATION_TOOLS.map((tool) => (
-            <div
+            <Image
               key={tool.slug}
-              className="flex items-center justify-center border border-border bg-background p-1.5"
-              title={tool.name}
-            >
-              <Image
-                src={`/images/logos/${tool.slug}.svg`}
-                alt={tool.name}
-                width={20}
-                height={20}
-                className={`h-5 w-5 ${["github", "notion", "linear"].includes(tool.slug) ? "dark:invert" : ""}`}
-              />
-            </div>
+              src={`/images/logos/${tool.slug}.svg`}
+              alt={tool.name}
+              width={20}
+              height={20}
+              className={`h-5 w-5 opacity-60 ${logoInvertClass(tool.slug)}`}
+            />
           ))}
         </div>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-3 text-center text-xs">
           + 985 more
         </p>
       </div>
@@ -156,15 +157,15 @@ function IntegrationsFeatureCard({ index }: { index: number }) {
 function MessagingFeatureCard({ index }: { index: number }) {
   return (
     <AnimateOnView delay={index * 0.1}>
-      <div className="h-full border-2 border-border bg-card p-6">
-        <div className="flex h-10 w-10 items-center justify-center border border-border bg-muted">
-          <MessageCircle className="h-5 w-5 text-foreground" />
+      <div className="bg-card border-border/40 h-full rounded-xl border p-6 transition-all duration-200 hover:border-primary/20 hover:shadow-sm hover:-translate-y-0.5">
+        <div className="bg-primary/10 flex h-9 w-9 items-center justify-center rounded-lg">
+          <MessageCircle className="text-primary h-4 w-4" />
         </div>
         <div className="mt-4 flex flex-col gap-1.5">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+          <h3 className="text-foreground text-base font-semibold">
             Messaging Platforms
           </h3>
-          <p className="text-sm leading-relaxed text-muted-foreground">
+          <p className="text-muted-foreground text-sm leading-relaxed">
             Chat with your agent from anywhere you already work.
           </p>
         </div>
@@ -172,22 +173,22 @@ function MessagingFeatureCard({ index }: { index: number }) {
           {MESSAGING_PLATFORMS.map((platform) => (
             <div
               key={platform.slug}
-              className={`inline-flex items-center gap-1.5 border px-3 py-1 text-xs ${
+              className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium ${
                 platform.disabled
-                  ? "border-border bg-muted text-muted-foreground"
-                  : "border-primary/30 bg-primary/5 text-primary"
+                  ? "border-border/40 bg-muted text-muted-foreground border"
+                  : "bg-primary/10 text-primary"
               }`}
             >
               <Image
                 src={`/images/logos/${platform.slug}.svg`}
                 alt={platform.name}
-                width={14}
-                height={14}
-                className={`h-3.5 w-3.5 ${platform.slug === "linear" ? "dark:invert" : ""}`}
+                width={18}
+                height={18}
+                className={`h-[18px] w-[18px] ${logoInvertClass(platform.slug)}`}
               />
               {platform.name}
               {platform.disabled && (
-                <span className="text-[10px] text-muted-foreground/60">
+                <span className="text-muted-foreground/60 text-[10px] uppercase tracking-wider">
                   soon
                 </span>
               )}
@@ -204,10 +205,10 @@ export function FeaturesSection() {
     <section className="relative px-6 py-20 sm:px-8 sm:py-28 md:px-10 md:py-36 lg:py-44">
       <div className="relative z-10 mx-auto max-w-6xl">
         <AnimateOnView className="mb-12 md:mb-20">
-          <p className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+          <p className="text-muted-foreground mb-4 text-xs font-medium uppercase tracking-widest">
             Why EthioClaw?
           </p>
-          <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">
+          <h2 className="font-serif-display text-foreground text-3xl font-normal leading-[1.1] tracking-tight md:text-4xl lg:text-[2.75rem]">
             Secure by default. Powerful by design.
           </h2>
         </AnimateOnView>

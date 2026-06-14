@@ -58,7 +58,19 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: false,
   },
-  plugins: [username(), nextCookies()],
+  plugins: [
+    username({
+      usernameValidator: (username) => {
+        if (typeof username !== "string") return false;
+        if (username !== username.trim()) return false;
+        if (username.length < 3 || username.length > 30) return false;
+        if (username.includes(" ")) return false;
+        // alphanumeric, hyphens, underscores only
+        return /^[a-zA-Z0-9_-]+$/.test(username);
+      },
+    }),
+    nextCookies(),
+  ],
   session: {
     expiresIn: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,

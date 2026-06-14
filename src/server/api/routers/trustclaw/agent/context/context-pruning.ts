@@ -20,7 +20,18 @@ interface PruneResult {
 
 function estimateMessageChars(msg: ReconstructedMessage): number {
   if (msg.role === "user") {
-    return msg.content.length;
+    if (typeof msg.content === "string") {
+      return msg.content.length;
+    }
+    let chars = 0;
+    for (const part of msg.content) {
+      if (part.type === "text") {
+        chars += part.text.length;
+      } else if (part.type === "image") {
+        chars += part.image.length;
+      }
+    }
+    return chars;
   }
   if (msg.role === "assistant") {
     if (typeof msg.content === "string") {

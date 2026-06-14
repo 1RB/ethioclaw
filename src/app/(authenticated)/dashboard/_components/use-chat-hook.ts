@@ -5,8 +5,12 @@ import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { trpc } from "~/clients/trpc";
+import type { Attachment } from "./chat/chat-input";
 
-export function useChatHook({ initialMessages, streamId }: {
+export function useChatHook({
+  initialMessages,
+  streamId,
+}: {
   initialMessages: UIMessage[];
   streamId: string | null;
 }) {
@@ -51,9 +55,33 @@ export function useChatHook({ initialMessages, streamId }: {
   const sendMessageRef = useRef(chat.sendMessage);
   sendMessageRef.current = chat.sendMessage;
 
-  const sendMessage = useCallback((text: string) => {
-    void sendMessageRef.current({ text });
-  }, []);
+  const sendMessage = useCallback(
+    (text: string, attachments?: Attachment[]) => {
+      const parts: Array<
+        | { type: "text"; text: string }
+        | { type: "image"; image: string }
+        | { type: "audio"; audio: string }
+      > = [];
+
+      if (text.trim()) {
+        parts.push({ type: "text", text: text.trim() });
+      }
+
+      if (attachments) {
+        for (const attachment of attachments) {
+          if (attachment.type === "image") {
+            parts.push({ type: "image", image: attachment.url });
+          } else if (attachment.type === "voice") {
+            parts.push({ type: "audio", audio: attachment.url });
+          }
+        }
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+      void (sendMessageRef.current as any)({ parts } as any);
+    },
+    [],
+  );
 
   const stopRef = useRef(chat.stop);
   stopRef.current = chat.stop;

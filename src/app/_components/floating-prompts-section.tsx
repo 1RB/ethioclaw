@@ -33,6 +33,15 @@ const PROMPTS: Prompt[] = [
   },
 ];
 
+const PROMPT_POSITIONS = [
+  { top: "2%", left: "2%", delay: 0 },
+  { top: "0%", left: "52%", delay: 0.3 },
+  { top: "28%", left: "18%", delay: 0.1 },
+  { top: "26%", left: "56%", delay: 0.4 },
+  { top: "52%", left: "4%", delay: 0.2 },
+  { top: "50%", left: "46%", delay: 0.5 },
+] as const;
+
 const APP_ICONS = [
   "gmail",
   "slack",
@@ -48,43 +57,110 @@ const APP_ICONS = [
   "discord",
 ] as const;
 
-const MONOCHROME_LOGOS = new Set(["github", "notion", "linear"]);
+const ICON_POSITIONS = [
+  { top: "5%", left: "2%" },
+  { top: "3%", left: "40%" },
+  { top: "7%", left: "78%" },
+  { top: "10%", left: "92%" },
+  { top: "30%", left: "0%" },
+  { top: "45%", left: "90%" },
+  { top: "55%", left: "3%" },
+  { top: "50%", left: "85%" },
+  { top: "75%", left: "15%" },
+  { top: "78%", left: "70%" },
+  { top: "80%", left: "92%" },
+  { top: "85%", left: "40%" },
+] as const;
+
+const DARK_INVERT_LOGOS = new Set(["github", "linear", "notion"]);
+
+function logoInvertClass(slug: string): string {
+  return DARK_INVERT_LOGOS.has(slug) ? "dark:invert" : "";
+}
 
 export function FloatingPromptsSection() {
   return (
-    <section className="relative overflow-hidden px-6 py-20 sm:px-8 sm:py-28 md:px-10 md:py-36 lg:py-44">
+    <section className="relative overflow-hidden px-4 py-16 md:px-6 md:py-24 lg:py-32">
       <div className="mx-auto max-w-6xl">
         <AnimateOnView
           as="h2"
-          className="mb-12 text-center font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:mb-20 md:text-4xl lg:text-5xl"
+          className="font-serif-display mb-10 text-center text-2xl font-normal tracking-tight text-foreground sm:mb-14 md:mb-20 md:text-3xl lg:text-4xl"
         >
           All your favourite apps.{" "}
-          <span className="italic">Zero setup.</span>
+          <span className="italic text-primary">Zero setup.</span>
         </AnimateOnView>
 
-        {/* App icon strip */}
-        <div className="mb-12 flex flex-wrap items-center justify-center gap-4 md:gap-6">
-          {APP_ICONS.map((slug) => (
-            <div key={slug} className="opacity-40 grayscale transition-opacity hover:opacity-100 hover:grayscale-0">
-              <Image
-                src={`/images/logos/${slug}.svg`}
-                alt=""
-                aria-hidden
-                width={28}
-                height={28}
-                className={MONOCHROME_LOGOS.has(slug) ? "dark:invert" : ""}
-                style={{ width: 28, height: 28 }}
-              />
-            </div>
-          ))}
+        {/* Desktop: floating layout */}
+        <div className="relative hidden min-h-[520px] lg:block">
+          {/* Background app icons */}
+          {APP_ICONS.map((slug, i) => {
+            const pos = ICON_POSITIONS[i]!;
+            return (
+              <div
+                key={slug}
+                className="pointer-events-none absolute opacity-[0.12] dark:opacity-[0.18]"
+                style={{
+                  top: pos.top,
+                  left: pos.left,
+                  animation: `fade-in 1s ease-out ${i * 0.05}s both`,
+                }}
+              >
+                <Image
+                  src={`/images/logos/${slug}.svg`}
+                  alt=""
+                  aria-hidden
+                  width={32}
+                  height={32}
+                  className={logoInvertClass(slug)}
+                  style={{ width: 32, height: 32 }}
+                />
+              </div>
+            );
+          })}
+
+          {/* Floating prompt cards */}
+          {PROMPTS.map((prompt, i) => {
+            const pos = PROMPT_POSITIONS[i]!;
+            return (
+              <div
+                key={i}
+                className="absolute max-w-xs rounded-xl border border-border/40 bg-card px-4 py-3 shadow-sm"
+                style={{
+                  top: pos.top,
+                  left: pos.left,
+                  animation: `fade-in-up 0.5s ease-out ${0.2 + pos.delay}s both, float-y-sm ${5 + i * 0.5}s ease-in-out ${0.2 + pos.delay}s infinite`,
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex shrink-0 items-center gap-1.5 pt-0.5">
+                    {prompt.icons.map((slug) => (
+                      <Image
+                        key={slug}
+                        src={`/images/logos/${slug}.svg`}
+                        alt=""
+                        aria-hidden
+                        width={18}
+                        height={18}
+                        className={logoInvertClass(slug)}
+                        style={{ width: 18, height: 18 }}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm leading-snug text-foreground">
+                    {prompt.text}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Prompt grid */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Mobile: clean vertical stack */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
           {PROMPTS.map((prompt, i) => (
             <AnimateOnView
               key={i}
-              className="border-2 border-border bg-card p-4"
+              className="rounded-xl border border-border/40 bg-card px-4 py-3.5 shadow-sm"
               delay={i * 0.08}
               duration={0.4}
             >
@@ -98,12 +174,12 @@ export function FloatingPromptsSection() {
                       aria-hidden
                       width={18}
                       height={18}
-                      className={MONOCHROME_LOGOS.has(slug) ? "dark:invert" : ""}
+                      className={logoInvertClass(slug)}
                       style={{ width: 18, height: 18 }}
                     />
                   ))}
                 </div>
-                <p className="text-sm leading-relaxed text-foreground">
+                <p className="text-sm leading-snug text-foreground">
                   {prompt.text}
                 </p>
               </div>

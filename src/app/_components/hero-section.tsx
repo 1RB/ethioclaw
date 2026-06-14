@@ -1,9 +1,30 @@
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Bot } from "lucide-react";
+import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { AnimateOnView } from "~/components/core/animate-on-view";
 import { ChatMockup } from "./chat-mockup";
-import { TOOL_LOGOS } from "~/lib/landing-assets";
+
+const DARK_INVERT_LOGOS = new Set(["github", "linear", "notion"]);
+
+function logoInvertClass(slug: string): string {
+  return DARK_INVERT_LOGOS.has(slug) ? "invert" : "";
+}
+
+const TOOL_LOGOS = [
+  "gmail",
+  "github",
+  "jira",
+  "notion",
+  "googlecalendar",
+  "linear",
+  "figma",
+  "asana",
+  "trello",
+  "googledrive",
+  "discord",
+  "dropbox",
+] as const;
 
 export function HeroSection() {
   return (
@@ -15,69 +36,66 @@ export function HeroSection() {
         >
           <AnimateOnView
             as="h1"
-            className="font-serif-display text-[2rem] font-medium leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+            className="font-serif-display text-[2rem] font-normal leading-[1.05] tracking-tight text-foreground sm:text-[2.5rem] md:text-5xl lg:text-[3.5rem]"
             delay={0.1}
           >
-            Your AI that does things while you sleep.{" "}
-            <span className="italic">Securely.</span>
+            Your 24/7 AI agent that actually does the work.{" "}
+            <span className="italic text-primary">While you sleep.</span>
           </AnimateOnView>
 
+          {/* Mobile: raw logo row */}
           <AnimateOnView
-            className="flex w-full items-center justify-center overflow-x-auto py-2 lg:hidden"
+            className="w-full lg:hidden"
             animation="fade-in"
             delay={0.15}
           >
-            <div className="flex shrink-0 -space-x-2">
-              {TOOL_LOGOS.map((slug) => (
-                <div
-                  key={slug}
-                  className="relative h-9 w-9 border-2 border-background bg-card p-1.5 sm:h-10 sm:w-10"
-                >
+            <div className="flex w-full items-center justify-center">
+              <div className="flex flex-wrap items-center justify-center gap-3 py-2">
+                {TOOL_LOGOS.map((slug) => (
                   <Image
+                    key={slug}
                     src={`/images/logos/${slug}.svg`}
                     alt=""
                     aria-hidden
-                    width={24}
-                    height={24}
-                    className="dark:invert"
-                    style={{ width: "100%", height: "100%" }}
+                    width={22}
+                    height={22}
+                    className={`h-[22px] w-[22px] ${logoInvertClass(slug)}`}
+                    style={{ width: 22, height: 22 }}
                   />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </AnimateOnView>
 
           <AnimateOnView
             as="p"
-            className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl"
+            className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg md:max-w-2xl md:text-xl"
             delay={0.2}
           >
-            EthioClaw is a 24/7 AI assistant with 1000+ tools via{" "}
-            <strong>OAuth</strong> and <strong>sandboxed execution</strong>.
-            Built on the ideas behind OpenClaw, rebuilt from scratch for
-            security.
+            Launch an autonomous AI agent with 1000+ integrations via{" "}
+            <strong className="text-foreground">OAuth</strong> and{" "}
+            <strong className="text-foreground">sandboxed execution</strong>.
+            No passwords. No setup. Just results.
           </AnimateOnView>
 
-          <AnimateOnView delay={0.25}>
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 border-2 border-border px-6 py-3 text-sm font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
-            >
-              <ArrowRight className="h-4 w-4" />
-              Launch your agent
-              <ArrowRight className="h-4 w-4" />
+          {/* Single primary CTA */}
+          <AnimateOnView delay={0.3} className="w-full sm:w-auto">
+            <Link href="/login" className="block w-full sm:inline-block">
+              <Button
+                size="lg"
+                className="h-14 w-full px-8 text-base shadow-sm transition-transform active:scale-[0.98] sm:h-12 sm:w-auto"
+              >
+                <Bot className="mr-2 h-4 w-4" />
+                Launch Your Agent
+                <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Button>
             </Link>
           </AnimateOnView>
         </AnimateOnView>
 
-        <AnimateOnView
-          className="flex w-full flex-1 justify-center lg:w-auto lg:justify-end"
-          animation="fade-in-right"
-          delay={0.3}
-          duration={0.7}
-        >
+        <div className="flex w-full flex-1 justify-center lg:w-auto lg:justify-end">
           <ChatMockup />
-        </AnimateOnView>
+        </div>
       </div>
     </section>
   );

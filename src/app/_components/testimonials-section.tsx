@@ -65,22 +65,22 @@ const TWEETS: Tweet[] = [
 function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
   return (
     <AnimateOnView
-      className="border-2 border-border bg-card p-4"
+      className="rounded-xl border border-border/40 bg-card p-5 transition-all duration-200 hover:border-primary/20 hover:shadow-sm hover:-translate-y-0.5"
       delay={index * 0.1}
       margin="-60px"
     >
       {/* Header row */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         <Image
           src={tweet.avatar}
           alt={tweet.displayName}
           width={40}
           height={40}
           loading="lazy"
-          className="h-10 w-10 object-cover"
+          className="h-10 w-10 rounded-full object-cover"
         />
         <div>
-          <div className="text-sm font-bold text-foreground">
+          <div className="text-sm font-semibold text-foreground">
             {tweet.displayName}
           </div>
           <div className="text-sm text-muted-foreground">{tweet.handle}</div>
@@ -93,7 +93,7 @@ function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
       </p>
 
       {/* Engagement row */}
-      <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground/60">
+      <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground/70">
         <span className="flex items-center gap-1">
           <MessageCircle className="h-3.5 w-3.5" />
           {tweet.replies}
@@ -113,7 +113,7 @@ function TweetCard({ tweet, index }: { tweet: Tweet; index: number }) {
       </div>
 
       {/* Timestamp */}
-      <div className="mt-2 text-xs text-muted-foreground">
+      <div className="mt-2 text-xs text-muted-foreground/60">
         {tweet.timestamp}
       </div>
     </AnimateOnView>
@@ -125,12 +125,12 @@ export function TestimonialsSection() {
     <section className="relative overflow-hidden px-6 py-20 md:px-8 md:py-28 lg:py-36">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center md:mb-20">
-          <h2 className="font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground md:text-4xl lg:text-5xl">
+          <h2 className="font-serif-display text-3xl font-normal leading-[1.1] tracking-tight text-foreground md:text-4xl lg:text-[2.75rem]">
             No seriously, stop giving OpenClaw your passwords.
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
           {TWEETS.map((tweet, index) => (
             <TweetCard key={tweet.handle} tweet={tweet} index={index} />
           ))}

@@ -70,7 +70,7 @@ function IndicatorIcon({ type }: { type: Indicator }) {
 function ComparisonCard({ row, index }: { row: ComparisonRow; index: number }) {
   return (
     <AnimateOnView delay={index * 0.05} margin="-40px">
-      <div className="border-2 border-border bg-card p-4">
+      <div className="rounded-xl border border-border/40 bg-card p-4">
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {row.category}
         </p>
@@ -105,7 +105,7 @@ export function ComparisonSection() {
       <div className="mx-auto max-w-4xl">
         <AnimateOnView
           as="h2"
-          className="mb-12 text-center font-serif-display text-3xl font-medium leading-[1.02] tracking-tight text-foreground sm:mb-16 md:mb-20 md:text-4xl lg:text-5xl"
+          className="font-serif-display mb-12 text-center text-3xl font-normal leading-[1.1] tracking-tight text-foreground sm:mb-16 md:mb-20 md:text-4xl lg:text-[2.75rem]"
         >
           Why is EthioClaw better?
         </AnimateOnView>
@@ -123,10 +123,10 @@ export function ComparisonSection() {
           delay={0.1}
           margin="-50px"
         >
-          <div className="overflow-x-auto border-2 border-border">
+          <div className="overflow-x-auto rounded-xl border border-border/40">
             <table className="w-full min-w-[540px] border-collapse">
               <thead>
-                <tr className="border-b-2 border-border bg-muted/30">
+                <tr className="border-b border-border/40 bg-muted/30">
                   <th className="py-4 pr-4 pl-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground" />
                   <th className="px-4 py-4 text-center text-sm font-semibold text-foreground md:text-base">
                     EthioClaw
@@ -138,7 +138,7 @@ export function ComparisonSection() {
               </thead>
               <tbody>
                 {ROWS.map((row) => (
-                  <tr key={row.category} className="border-b border-border last:border-0">
+                  <tr key={row.category} className="border-b border-border/30 last:border-0">
                     <td className="py-4 pr-4 pl-4 text-sm font-medium text-foreground md:text-base">
                       {row.category}
                     </td>
@@ -171,9 +171,9 @@ export function ComparisonSection() {
         >
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 border-2 border-border px-8 py-3 text-sm font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 active:scale-[0.98]"
           >
-            Get Started
+            Launch Your Agent
             <ArrowRight className="h-4 w-4" />
           </Link>
         </AnimateOnView>

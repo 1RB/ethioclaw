@@ -9,33 +9,49 @@ import { BottomCtaSection } from "./bottom-cta-section";
 import { EthioClawBrand } from "./ethioclaw-brand";
 import Link from "next/link";
 
+function SectionDivider() {
+  return (
+    <div className="mx-auto max-w-6xl px-6 md:px-8">
+      <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+    </div>
+  );
+}
+
 export function LandingPage() {
   return (
     <div className="bg-background flex min-h-screen flex-col overflow-x-hidden">
       <LandingNav />
       <main className="flex-1 pt-14">
         <HeroSection />
+        <SectionDivider />
         <FeaturesSection />
+        <SectionDivider />
         <SecuritySection />
+        <SectionDivider />
         <ComparisonSection />
-        <FloatingPromptsSection />
+        <div className="bg-muted/30">
+          <FloatingPromptsSection />
+        </div>
+        <SectionDivider />
         <TestimonialsSection />
         <BottomCtaSection />
       </main>
-      <footer className="border-t-2 border-border px-6 py-6 md:px-8 md:py-8">
+      <footer className="border-t border-border/60 px-6 py-8 md:px-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <EthioClawBrand size="sm" />
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            <span className="hover:text-foreground cursor-pointer transition-colors">Privacy</span>
-            <span className="text-border hidden sm:inline">|</span>
-            <span className="hover:text-foreground cursor-pointer transition-colors">Terms</span>
-            <span className="text-border hidden sm:inline">|</span>
-            <Link href="/status" className="hover:text-foreground transition-colors">Status</Link>
-            <span className="text-border hidden sm:inline">|</span>
-            <a href="https://github.com/ComposioHQ/trustclaw" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-muted-foreground">
+            <Link href="/privacy" className="transition-colors hover:text-foreground">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-foreground">
+              Terms
+            </Link>
+            <Link href="/status" className="transition-colors hover:text-foreground">
+              Status
+            </Link>
           </div>
-          <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
-            &copy; 2026
+          <span className="text-muted-foreground text-xs">
+            &copy; 2026 EthioClaw
           </span>
         </div>
       </footer>

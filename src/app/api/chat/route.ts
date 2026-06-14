@@ -57,26 +57,45 @@ export async function POST(request: Request) {
   const lastUserMessage = [...body.data.messages]
     .reverse()
     .find((m) => m.role === "user");
-  const userText =
-    lastUserMessage?.parts
-      ?.filter(
-        (p): p is { type: string; text: string } =>
-          typeof p === "object" &&
-          p !== null &&
-          "type" in p &&
-          p.type === "text" &&
-          "text" in p &&
-          typeof p.text === "string",
-      )
-      .map((p) => p.text)
-      .join("\n") ?? "";
-  if (!userText.trim()) {
+
+  // Extract text and image parts from the message
+  let userText = "";
+  const userContentParts: Array<
+    { type: "text"; text: string } | { type: "image"; image: string } | { type: "audio"; audio: string }
+  > = [];
+
+  if (lastUserMessage?.parts) {
+    for (const part of lastUserMessage.parts) {
+      if (
+        typeof part === "object" &&
+        part !== null &&
+        "type" in part
+      ) {
+        if (part.type === "text" && "text" in part && typeof part.text === "string") {
+          userText += part.text + "\n";
+          userContentParts.push({ type: "text", text: part.text });
+        } else if (part.type === "image" && "image" in part && typeof part.image === "string") {
+          userContentParts.push({ type: "image", image: part.image });
+        } else if (part.type === "audio" && "audio" in part && typeof part.audio === "string") {
+          userContentParts.push({ type: "audio", audio: part.audio });
+        }
+      }
+    }
+  }
+
+  // Fallback to legacy content field
+  if (!userText.trim() && lastUserMessage?.content) {
+    userText = lastUserMessage.content;
+  }
+
+  if (!userText.trim() && userContentParts.length === 0) {
     return new Response("Empty message", { status: 400 });
   }
 
   const prepareResult = await prepareAgentRun({
     instanceId,
-    userMessage: userText,
+    userMessage: userText.trim(),
+    userContentParts,
     source: "web",
   });
 

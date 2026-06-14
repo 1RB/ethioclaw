@@ -12,7 +12,7 @@ import { useChatHook } from "../use-chat-hook";
 import { UserMessage } from "./user-message";
 import { AssistantMessage } from "./assistant-message/assistant-message";
 import { ThinkingIndicator } from "./assistant-message/thinking-indicator";
-import { ChatInput } from "./chat-input";
+import { ChatInput, type Attachment } from "./chat-input";
 import { TerminalPane } from "../terminal/terminal-pane";
 
 const SAMPLE_PROMPTS = [
@@ -92,8 +92,8 @@ export function ChatView({
 
   // Scroll the user's message to the top of the viewport when they send it
   const handleSend = useCallback(
-    (text: string) => {
-      const result = sendMessage(text);
+    (text: string, attachments?: Attachment[]) => {
+      const result = sendMessage(text, attachments);
       // Wait one frame for Virtuoso to render the new user message
       requestAnimationFrame(() => {
         virtuosoRef.current?.scrollToIndex({
